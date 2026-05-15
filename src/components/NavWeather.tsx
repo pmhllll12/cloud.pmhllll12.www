@@ -1,0 +1,175 @@
+import { useEffect, useState } from "react";
+import "./NavWeather.css";
+
+type WeatherApi = {
+  city: string;
+  temp: number;
+  description: string;
+  icon: string;
+};
+
+type WeatherState =
+  | { status: "loading" }
+  | { status: "ok"; temp: number; label: string; icon: string }
+  | { status: "error"; message?: string };
+
+const REFRESH_MS = 15 * 60 * 1000;
+const MINT = "#00e5ff";
+
+function getWeatherUrl(): string {
+  const base = import.meta.env.VITE_API_BASE;
+  if (typeof base === "string" && base.trim()) {
+    return `${base.replace(/\/$/, "")}/weather`;
+  }
+  return "/weather";
+}
+
+function pickIconKind(icon: string, description: string): string {
+  if (icon.startsWith("01")) return "clear";
+  if (icon.startsWith("02")) return "partly";
+  if (icon.startsWith("03") || icon.startsWith("04")) return "cloud";
+  if (icon.startsWith("09") || icon.startsWith("10")) return "rain";
+  if (icon.startsWith("11")) return "storm";
+  if (icon.startsWith("13")) return "snow";
+  if (icon.startsWith("50")) return "fog";
+  const d = description.toLowerCase();
+  if (d.includes("맑")) return "clear";
+  if (d.includes("비")) return "rain";
+  if (d.includes("눈")) return "snow";
+  return "clear";
+}
+
+function WeatherIcon({ kind }: { kind: string }) {
+  const props = {
+    className: "nav-weather__icon-svg",
+    width: 22,
+    height: 22,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: MINT,
+    strokeWidth: 2,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    "aria-hidden": true,
+  };
+
+  if (kind === "clear" || kind === "partly") {
+    return (
+      <svg {...props}>
+        <circle cx="12" cy="12" r="4.5" fill={MINT} stroke="none" />
+        <path d="M12 2v2.5M12 19.5V22M4.5 4.5l1.8 1.8M17.7 17.7l1.8 1.8M2 12h2.5M19.5 12H22M4.5 19.5l1.8-1.8M17.7 6.3l1.8-1.8" />
+        {kind === "partly" ? (
+          <path
+            d="M18 16a3.5 3.5 0 0 0-5-3.2A3 3 0 1 0 7 16h11"
+            opacity="0.85"
+          />
+        ) : null}
+      </svg>
+    );
+  }
+
+  if (kind === "rain") {
+    return (
+      <svg {...props}>
+        <path d="M18 14a4 4 0 0 0-7-2.5A4 4 0 1 0 6 18h12a3 3 0 0 0 0-6h-.5" />
+        <path d="M8 20v2M12 20v2M16 20v2" />
+      </svg>
+    );
+  }
+
+  if (kind === "cloud" || kind === "fog") {
+    return (
+      <svg {...props}>
+        <path d="M18 14a4 4 0 0 0-7-2.5A4 4 0 1 0 6 18h12a3 3 0 0 0 0-6h-.5" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...props}>
+      <circle cx="12" cy="12" r="4.5" fill={MINT} stroke="none" />
+      <path d="M12 2v2.5M12 19.5V22M4.5 4.5l1.8 1.8M17.7 17.7l1.8 1.8M2 12h2.5M19.5 12H22" />
+    </svg>
+  );
+}
+
+async function fetchSeoulWeather(): Promise<WeatherState> {
+  const res = await fetch(getWeatherUrl());
+  const raw = await res.text();
+  if (!res.ok) {
+    let message = "날씨를 불러올 수 없습니다.";
+    try {
+      const j = JSON.parse(raw) as { detail?: string };
+      if (j.detail) message = j.detail;
+    } catch {
+      /* ignore */
+    }
+    return { status: "error", message };
+  }
+
+  const data = JSON.parse(raw) as WeatherApi;
+  const icon = pickIconKind(data.icon, data.description);
+  return {
+    status: "ok",
+    temp: data.temp,
+    label: data.description,
+    icon,
+  };
+}
+
+export default function NavWeather() {
+  const [weather, setWeather] = useState<WeatherState>({ status: "loading" });
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const load = async () => {
+      try {
+        const next = await fetchSeoulWeather();
+        if (!cancelled) setWeather(next);
+      } catch {
+        if (!cancelled) {
+          setWeather({
+            status: "error",
+            message: "API 서버(python run_api.py)가 켜져 있는지 확인하세요.",
+          });
+        }
+      }
+    };
+
+    void load();
+    const id = window.setInterval(() => void load(), REFRESH_MS);
+    return () => {
+      cancelled = true;
+      window.clearInterval(id);
+    };
+  }, []);
+
+  const iconKind =
+    weather.status === "ok" ? weather.icon : "clear";
+  const tempText =
+    weather.status === "ok"
+      ? `${weather.temp}°`
+      : weather.status === "loading"
+        ? "…"
+        : "--°";
+
+  const title =
+    weather.status === "ok"
+      ? `서울 · ${weather.label} · ${weather.temp}°C`
+      : weather.status === "loading"
+        ? "서울 날씨 불러오는 중"
+        : weather.message ?? "서울 날씨를 불러올 수 없습니다";
+
+  return (
+    <div className="nav-weather" title={title} aria-label={title}>
+      <span className="nav-weather__city">서울</span>
+      <WeatherIcon kind={iconKind} />
+      <span
+        className={`nav-weather__temp${weather.status !== "ok" ? " nav-weather__temp--muted" : ""}`}
+      >
+        {tempText}
+      </span>
+    </div>
+  );
+}
