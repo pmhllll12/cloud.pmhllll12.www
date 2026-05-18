@@ -62,6 +62,12 @@
   gap: 10px;
 }
 
+.nav__auth-btns {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .nav__btn {
   display: inline-flex;
   align-items: center;
@@ -104,6 +110,16 @@
   background: var(--accent-strong);
   border-color: var(--accent-strong);
   transform: translateY(-1px);
+}
+
+.nav__session {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(0, 229, 255, 0.95);
 }
 
 @media (max-width: 720px) {
