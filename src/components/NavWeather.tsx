@@ -93,8 +93,36 @@ function WeatherIcon({ kind }: { kind: string }) {
   );
 }
 
+function sleep(ms: number): Promise<void> {
+  return new Promise((r) => window.setTimeout(r, ms));
+}
+
+/** 백엔드 재시작 직후 등 일시적 실패 시 온도가 -- 로만 보이는 것을 줄임 */
+async function fetchWithRetry(
+  url: string,
+  attempts = 3,
+  delayMs = 400,
+): Promise<Response> {
+  let lastErr: unknown;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const res = await fetch(url);
+      if (res.ok) return res;
+      if (res.status >= 500 && i < attempts - 1) {
+        await sleep(delayMs);
+        continue;
+      }
+      return res;
+    } catch (e) {
+      lastErr = e;
+      if (i < attempts - 1) await sleep(delayMs);
+    }
+  }
+  throw lastErr instanceof Error ? lastErr : new Error(String(lastErr));
+}
+
 async function fetchSeoulWeather(): Promise<WeatherState> {
-  const res = await fetch(getWeatherUrl());
+  const res = await fetchWithRetry(getWeatherUrl());
   const raw = await res.text();
   if (!res.ok) {
     let message = "날씨를 불러올 수 없습니다.";
@@ -131,7 +159,8 @@ export default function NavWeather() {
         if (!cancelled) {
           setWeather({
             status: "error",
-            message: "API 서버(python run_api.py)가 켜져 있는지 확인하세요.",
+            message:
+              "백엔드(backend\\apps 에서 python main.py)가 켜져 있는지 확인하세요.",
           });
         }
       }

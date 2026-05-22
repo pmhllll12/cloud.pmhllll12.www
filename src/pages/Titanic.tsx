@@ -7,6 +7,11 @@ import {
 } from "react";
 import "./Titanic.css";
 
+type TitanicProps = {
+  /** 수업용 레이아웃 등에서 상단 제목을 숨길 때 */
+  hideOuterTitle?: boolean;
+};
+
 function isTitanicCsv(name: string): boolean {
   return name.trim().toLowerCase() === "titanic.csv";
 }
@@ -20,7 +25,7 @@ async function readCsvPreview(file: File): Promise<{ rows: number; bytes: number
 
 const INPUT_ID = "titanic-csv-input";
 
-export default function Titanic() {
+export default function Titanic({ hideOuterTitle = false }: TitanicProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -84,9 +89,14 @@ export default function Titanic() {
   return (
     <main className="titanic">
       <div className="titanic__inner">
-        <h1 className="titanic__title">타이타닉 홈</h1>
+        {!hideOuterTitle ? (
+          <h1 className="titanic__title">타이타닉 홈</h1>
+        ) : null}
 
-        <section className="titanic-upload" aria-labelledby="titanic-upload-heading">
+        <section
+          className={`titanic-upload${hideOuterTitle ? " titanic-upload--tight" : ""}`}
+          aria-labelledby="titanic-upload-heading"
+        >
           <h2 id="titanic-upload-heading" className="titanic-upload__heading">
             Titanic 데이터
           </h2>

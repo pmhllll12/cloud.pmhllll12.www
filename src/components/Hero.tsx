@@ -1,6 +1,13 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { openFullWorldCupSchedule } from "../wcScheduleOpen";
+import HeroPredictionPanel from "./HeroPredictionPanel";
+import TodayBroadcastModal from "./TodayBroadcastModal";
 import "./Hero.css";
 
 const CHIPS = [
+  "예측·P",
+  "AI 분석",
   "본선",
   "조 편성",
   "16강",
@@ -12,10 +19,22 @@ const CHIPS = [
   "통계",
 ];
 
-export default function Hero() {
+type HeroProps = {
+  onGeminiPreset?: (text: string) => void;
+  /** false면 예측 패널 미포함 — Home에서 제미나이 아래로 배치 */
+  showPrediction?: boolean;
+};
+
+export default function Hero({
+  onGeminiPreset,
+  showPrediction = true,
+}: HeroProps) {
+  const [todayBroadcastOpen, setTodayBroadcastOpen] = useState(false);
+
   return (
     <section className="hero">
       <div className="hero__inner">
+        <div id="schedule" className="hero__sr-anchor" aria-hidden />
         <span className="hero__pill">FIFA WORLD CUP 2026</span>
 
         <h1 className="hero__title">
@@ -32,8 +51,18 @@ export default function Hero() {
           월드컵의 모든 순간을 함께 안내하는 시스템입니다.
         </p>
 
+        {showPrediction ? (
+          <HeroPredictionPanel onAiPreset={onGeminiPreset} />
+        ) : null}
+
         <div className="hero__actions">
-          <a href="#today" className="hero__btn hero__btn--primary">
+          <button
+            type="button"
+            className="hero__btn hero__btn--primary"
+            onClick={() => setTodayBroadcastOpen(true)}
+            aria-haspopup="dialog"
+            aria-expanded={todayBroadcastOpen}
+          >
             오늘의 경기
             <svg
               width="18"
@@ -50,10 +79,21 @@ export default function Hero() {
                 strokeLinejoin="round"
               />
             </svg>
-          </a>
-          <a href="#schedule" className="hero__btn hero__btn--ghost">
+          </button>
+          <button
+            type="button"
+            className="hero__btn hero__btn--ghost"
+            onClick={openFullWorldCupSchedule}
+          >
             전체 일정 보기
-          </a>
+          </button>
+          <Link
+            to="/board"
+            className="hero__btn hero__btn--ghost"
+            title="자유 수다·건의·문의"
+          >
+            자유게시판·건의
+          </Link>
         </div>
 
         <ul className="hero__chips" aria-label="주요 안내 카테고리">
@@ -64,6 +104,11 @@ export default function Hero() {
           ))}
         </ul>
       </div>
+
+      <TodayBroadcastModal
+        open={todayBroadcastOpen}
+        onClose={() => setTodayBroadcastOpen(false)}
+      />
     </section>
   );
 }

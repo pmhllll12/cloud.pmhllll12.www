@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from adapters.db_health_adapter import DbHealthAdapter
 from database import dispose_engine, get_db
 from doro.app.doro_director import DoroDirector
-from titanic.app.james_controller import JamesController
+from titanic.app.controllers.titanic_controller import TitanicController
 
 
 @asynccontextmanager
@@ -43,32 +43,32 @@ async def check_db(db: AsyncSession = Depends(get_db)):
 
 @app.get("/titanic/data")
 def read_titanic_data():
-    james = JamesController()
-    df = james.get_data()
+    ctrl = TitanicController()
+    df = ctrl.get_data()
 
     return df.to_dict(orient="records")
 
 
 @app.get("/titanic/count")
 def read_titanic_count():
-    james = JamesController()
-    count = james.get_count()
+    ctrl = TitanicController()
+    count = ctrl.get_count()
 
     return {"count": count}
 
 
 @app.get("/titanic/tree")
 def read_titanic_tree():
-    james = JamesController()
-    tree = james.has_decision_tree_model()
+    ctrl = TitanicController()
+    tree = ctrl.has_decision_tree_model()
 
     return {"tree": tree}
 
 
 @app.get("/titanic/model")
 def read_titanic_model():
-    controller = JamesController()
-    model_name = controller.get_model_name_and_accuracy()
+    ctrl = TitanicController()
+    model_name = ctrl.get_model_name_and_accuracy()
     return JSONResponse(content=jsonable_encoder(model_name))
 
 
@@ -83,4 +83,5 @@ def read_doro_data():
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    # 회원가입(/signup) 등은 backend/apps/main.py (기본 8000) 를 사용하세요.
+    uvicorn.run("main:app", host="127.0.0.1", port=8082, reload=True)

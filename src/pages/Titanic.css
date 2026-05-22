@@ -29,6 +29,10 @@
   margin-top: 36px;
 }
 
+.titanic-upload--tight {
+  margin-top: 0;
+}
+
 .titanic-upload__heading {
   margin: 0;
   font-size: 1.125rem;

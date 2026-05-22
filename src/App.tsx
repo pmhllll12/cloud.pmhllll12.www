@@ -1,7 +1,9 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Nav from "./components/Nav";
 import Home from "./pages/Home";
-import Titanic from "./pages/Titanic";
+import Board from "./pages/Board";
+import LessonLayout from "./pages/LessonLayout";
+import LessonTitanic from "./pages/LessonTitanic";
 import "./App.css";
 
 export default function App() {
@@ -10,7 +12,12 @@ export default function App() {
       <Nav />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/titanic" element={<Titanic />} />
+        <Route path="/board" element={<Board />} />
+        <Route path="/lesson" element={<LessonLayout />}>
+          <Route index element={<Navigate to="/lesson/titanic" replace />} />
+          <Route path="titanic" element={<LessonTitanic />} />
+        </Route>
+        <Route path="/titanic" element={<Navigate to="/lesson/titanic" replace />} />
       </Routes>
     </div>
   );

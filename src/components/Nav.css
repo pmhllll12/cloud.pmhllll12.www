@@ -16,6 +16,8 @@
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 32px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .nav__brand {
@@ -56,10 +58,61 @@
   color: var(--accent);
 }
 
+.nav__link--active {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.nav__schedule-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 6px 4px;
+  margin: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  color: var(--fg-1);
+  border-radius: 8px;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+}
+
+.nav__schedule-btn:hover {
+  color: var(--accent);
+  background: rgba(0, 229, 255, 0.06);
+}
+
+.nav__schedule-btn__label {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.nav__schedule-btn__hint {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(148, 163, 184, 0.95);
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav__schedule-btn--mobile {
+  display: none;
+}
+
 .nav__actions {
   display: inline-flex;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 10px;
+  min-width: 0;
 }
 
 .nav__auth-btns {
@@ -124,21 +177,106 @@
 
 @media (max-width: 720px) {
   .nav__inner {
-    padding: 14px 16px;
-    gap: 12px;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    align-items: center;
+    column-gap: 10px;
+    row-gap: 10px;
+    padding: 12px 12px;
+  }
+
+  .nav__brand {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
   }
 
   .nav__menu {
+    grid-column: 2;
+    grid-row: 1;
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .nav__menu .nav-weather {
+    margin-left: 0;
+    flex-shrink: 0;
+    padding: 5px 10px;
+    gap: 5px;
   }
 
   .nav__menu-links {
     display: none;
   }
 
+  .nav__actions {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: stretch;
+    width: 100%;
+    max-width: 100%;
+    justify-content: flex-start;
+    gap: 8px;
+    row-gap: 8px;
+  }
+
+  .nav__schedule-btn--mobile {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 12px;
+    border: 1px solid rgba(0, 229, 255, 0.45);
+    background: rgba(0, 229, 255, 0.08);
+    color: var(--accent);
+    cursor: pointer;
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .nav__schedule-btn--mobile:hover {
+    background: rgba(0, 229, 255, 0.16);
+  }
+
   .nav__btn {
-    padding: 8px 14px;
-    font-size: 13px;
+    padding: 8px 12px;
+    font-size: 12px;
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .nav__auth-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+}
+
+@media (max-width: 520px) {
+  .nav__logo {
+    font-size: 14px;
+    letter-spacing: 0.12em;
+  }
+}
+
+@media (max-width: 380px) {
+  .nav__inner {
+    padding: 10px 10px;
+  }
+
+  .nav__schedule-btn--mobile {
+    padding: 7px 10px;
+    font-size: 11px;
+  }
+
+  .nav__btn {
+    padding: 7px 10px;
+    font-size: 11px;
   }
 }

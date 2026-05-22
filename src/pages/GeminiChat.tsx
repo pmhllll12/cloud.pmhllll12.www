@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import "./GeminiChat.css";
 
 type ChatMessage = {
@@ -62,13 +62,32 @@ async function postChat(message: string): Promise<ChatResponse> {
   return { reply: data.reply.trim(), model: data.model ?? "" };
 }
 
-export default function GeminiChat() {
+type GeminiChatProps = {
+  preset?: { key: number; text: string } | null;
+  onPresetConsumed?: () => void;
+};
+
+export default function GeminiChat({
+  preset,
+  onPresetConsumed,
+}: GeminiChatProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [modelName, setModelName] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (!preset?.text) return;
+    setInput(preset.text);
+    onPresetConsumed?.();
+    requestAnimationFrame(() => {
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    });
+  }, [preset?.key, preset?.text, onPresetConsumed]);
 
   const scrollToBottom = useCallback(() => {
     const el = listRef.current;
@@ -121,7 +140,7 @@ export default function GeminiChat() {
   };
 
   return (
-    <aside className="gemini-chat" aria-label="Gemini 채팅">
+    <aside className="gemini-chat" aria-label="Gemini 채팅" id="gemini-chat">
       <div className="gemini-chat__head">
         <span className="gemini-chat__badge">Gemini</span>
         <h2 className="gemini-chat__title">제미나이와 대화</h2>
@@ -138,11 +157,16 @@ export default function GeminiChat() {
 
       <p className="gemini-chat__hint">
         백엔드 <code>POST /chat</code> 로 연결됩니다. 로컬에서는 Vite가{" "}
-        <code>/chat</code> 을 <code>127.0.0.1:8000</code> 으로 프록시합니다.
+        <code>/chat</code> 을 백엔드 API(기본 <code>127.0.0.1:8000</code>)로 프록시합니다.
         <br />
         <code>backend/apps/.env</code> 에{" "}
         <code>GEMINI_API_KEY</code> 를 넣고 API 서버(
-        <code>python run_api.py</code>)를 켜 두세요.
+        <code>python main.py</code>)를 켜 두세요.
+      </p>
+
+      <p className="gemini-chat__ai-hint">
+        <strong>AI 승부 예측</strong> — 예측 패널의「AI에게 이 경기 물어보기」를 누르면
+        여기에 질문이 채워집니다. 승률·예상 스코어를 물어보세요.
       </p>
 
       {error ? (
@@ -151,30 +175,33 @@ export default function GeminiChat() {
         </div>
       ) : null}
 
-      <div className="gemini-chat__messages" ref={listRef}>
-        {messages.length === 0 ? (
-          <p className="gemini-chat__empty">
-            월드컵 일정, 규칙, 팀 정보 등 무엇이든 물어보세요.
-          </p>
-        ) : (
-          messages.map((m) => (
-            <div
-              key={m.id}
-              className={`gemini-chat__bubble gemini-chat__bubble--${m.role}${m.pending ? " gemini-chat__bubble--pending" : ""}`}
-            >
-              <span className="gemini-chat__who">
-                {m.role === "user" ? "나" : "Gemini"}
-              </span>
-              <p className="gemini-chat__text">{m.text}</p>
-            </div>
-          ))
-        )}
+      <div className="gemini-chat__stream">
+        <div className="gemini-chat__messages" ref={listRef}>
+          {messages.length === 0 ? (
+            <p className="gemini-chat__empty">
+              월드컵 일정, 규칙, 팀 정보 등 무엇이든 물어보세요.
+            </p>
+          ) : (
+            messages.map((m) => (
+              <div
+                key={m.id}
+                className={`gemini-chat__bubble gemini-chat__bubble--${m.role}${m.pending ? " gemini-chat__bubble--pending" : ""}`}
+              >
+                <span className="gemini-chat__who">
+                  {m.role === "user" ? "나" : "Gemini"}
+                </span>
+                <p className="gemini-chat__text">{m.text}</p>
+              </div>
+            ))
+          )}
+        </div>
       </div>
 
       <form className="gemini-chat__form" onSubmit={onSubmit}>
         <textarea
+          ref={inputRef}
           className="gemini-chat__input"
-          rows={3}
+          rows={2}
           placeholder="메시지를 입력하세요…"
           value={input}
           disabled={loading}

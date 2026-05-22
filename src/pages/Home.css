@@ -1,7 +1,9 @@
 .home {
   position: relative;
   flex: 1;
-  overflow: hidden;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: visible;
   background: var(--bg-0);
 }
 
@@ -78,45 +80,147 @@
 .home__main {
   position: relative;
   z-index: 1;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
+/* 데스크톱: 왼쪽 히어로 → 예측 → 본문, 오른쪽 제미나이 세로 통합. 모바일: 히어로 글 → 제미나이 → 예측 → 본문 */
 .home__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 400px);
+  grid-template-columns: minmax(0, 1fr) minmax(280px, min(400px, 100%));
+  grid-template-rows: auto auto 1fr;
+  grid-template-areas:
+    "hero chat"
+    "prediction chat"
+    "sections chat";
   gap: 24px 32px;
-  align-items: stretch;
+  align-items: start;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 24px 32px;
+  padding: 0 clamp(12px, 4vw, 24px) 32px;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .home__hero {
+  grid-area: hero;
   min-width: 0;
+  width: 100%;
 }
 
-.home__aside {
+.home__chat-slot {
+  grid-area: chat;
   position: relative;
   z-index: 2;
   display: flex;
   align-items: flex-start;
   justify-content: center;
+  width: 100%;
+  min-width: 0;
   padding-top: 48px;
+  box-sizing: border-box;
 }
 
-@media (max-width: 1024px) {
+.home__prediction {
+  grid-area: prediction;
+  min-width: 0;
+  width: 100%;
+}
+
+.home__sections {
+  grid-area: sections;
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+@media (max-width: 1200px) {
   .home__grid {
     grid-template-columns: 1fr;
-    padding: 0 16px 24px;
+    grid-template-rows: auto;
+    grid-template-areas:
+      "hero"
+      "chat"
+      "prediction"
+      "sections";
+    padding: 8px clamp(12px, 4vw, 20px) 28px;
+    gap: 12px;
   }
 
-  .home__aside {
+  .home__chat-slot {
     padding-top: 0;
-    order: 2;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
   }
 
-  .home__hero {
-    order: 1;
+  .home__prediction {
+    max-width: 100%;
+  }
+
+  .home__chat-slot .gemini-chat {
+    max-width: none;
+    width: 100%;
+    margin: 0 auto;
+    min-height: 0;
+    max-height: min(52vh, 420px);
+    padding: 12px 14px;
+  }
+
+  .home__chat-slot .gemini-chat__messages {
+    min-height: 80px;
+    max-height: min(24vh, 220px);
+  }
+
+  .home__chat-slot .gemini-chat__hint {
+    display: none;
+  }
+
+  .home__chat-slot .gemini-chat__ai-hint {
+    display: none;
+  }
+
+  .home__chat-slot .gemini-chat__meta {
+    display: none;
+  }
+
+  .home__chat-slot .gemini-chat__head {
+    margin-bottom: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+  }
+
+  .home__chat-slot .gemini-chat__title {
+    margin: 0;
+    font-size: 17px;
+    flex: 1 1 auto;
+    min-width: 0;
+    line-height: 1.2;
+  }
+
+  .home__chat-slot .gemini-chat__form {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 10px;
+    padding-top: 10px;
+  }
+
+  .home__chat-slot .gemini-chat__input {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 44px;
+    max-height: 100px;
+  }
+
+  .home__chat-slot .gemini-chat__send {
+    align-self: stretch;
+    flex: 0 0 auto;
+    padding: 10px 16px;
+    border-radius: 12px;
   }
 }
-
