@@ -103,7 +103,7 @@ export default function HeroPredictionPanel({
   const homeKo = koTeam(match.home);
   const awayKo = koTeam(match.away);
 
-  const [points, setPoints] = useState(readPoints);
+  const [points] = useState(readPoints);
   const [totals, setTotals] = useState(() => {
     const bag = readVotes();
     const key = String(mid);
