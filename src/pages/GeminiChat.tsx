@@ -156,11 +156,17 @@ export default function GeminiChat({
       </div>
 
       <p className="gemini-chat__hint">
-        백엔드 <code>POST /chat</code> 로 연결됩니다. 로컬에서는 Vite가{" "}
-        <code>/chat</code> 을 백엔드 API(기본 <code>127.0.0.1:8000</code>)로 프록시합니다.
+        백엔드 <code>POST /chat</code> 로 연결됩니다. PC 브라우저에서는 Vite가{" "}
+        <code>/chat</code> 을 같은 PC의 API(기본 <code>127.0.0.1:8000</code>)로 프록시합니다.
         <br />
-        <code>backend/apps/.env</code> 에{" "}
-        <code>GEMINI_API_KEY</code> 를 넣고 API 서버(
+        <strong>폰·다른 기기·웹뷰 앱</strong>에서는 <code>localhost</code> 가 그 기기를 가리키므로,
+        PC와 같은 Wi‑Fi일 때 터미널에 나온 <code>Network</code> 주소(예:{" "}
+        <code>http://192.168.x.x:3000</code>)로 접속하세요. 빌드된 앱이 API를 직접 부를 때는{" "}
+        <code>.env</code> 의 <code>VITE_API_BASE=http://&lt;PC_LAN_IP&gt;:8000</code> 로 빌드하고,
+        API는 <code>API_HOST=0.0.0.0</code> 로 실행합니다. 자세히는{" "}
+        <code>frontend/DEV_SERVER.md</code> 를 보세요.
+        <br />
+        <code>backend/apps/.env</code> 에 <code>GEMINI_API_KEY</code> 를 넣고 API 서버(
         <code>python main.py</code>)를 켜 두세요.
       </p>
 

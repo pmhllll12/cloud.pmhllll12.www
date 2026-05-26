@@ -44,11 +44,14 @@ export default defineConfig(() => {
       port: DEV_PORT,
       /** 3000 사용 중이면 두 번째 dev 서버가 3001 로 떠서 프록시·탭이 엇갈리는 일을 막음 */
       strictPort: true,
+      /** 폰·태블릿에서 `http://<PC_LAN_IP>:3000` 으로 접속해 테스트할 때 필요 (localhost 는 기기 자신) */
+      host: true,
       proxy,
     },
     preview: {
       port: DEV_PORT,
       strictPort: true,
+      host: true,
       proxy,
     },
   };

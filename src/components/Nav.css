@@ -115,6 +115,57 @@
   min-width: 0;
 }
 
+.nav__titanic-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 229, 255, 0.35);
+  background: rgba(0, 229, 255, 0.06);
+  text-decoration: none;
+  flex-shrink: 0;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.nav__titanic-banner:hover {
+  background: rgba(0, 229, 255, 0.12);
+  border-color: rgba(0, 229, 255, 0.55);
+  transform: translateY(-1px);
+}
+
+.nav__titanic-banner__ship {
+  font-size: 16px;
+  line-height: 1;
+  filter: drop-shadow(0 0 6px rgba(0, 229, 255, 0.35));
+}
+
+.nav__titanic-banner__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  line-height: 1.15;
+  min-width: 0;
+}
+
+.nav__titanic-banner__title {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--fg-0);
+}
+
+.nav__titanic-banner__sub {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(148, 163, 184, 0.95);
+  letter-spacing: 0.02em;
+}
+
 .nav__auth-btns {
   display: inline-flex;
   align-items: center;
@@ -255,6 +306,23 @@
     flex-wrap: wrap;
     gap: 8px;
     align-items: center;
+  }
+
+  .nav__titanic-banner {
+    padding: 5px 10px;
+    gap: 6px;
+  }
+
+  .nav__titanic-banner__ship {
+    font-size: 14px;
+  }
+
+  .nav__titanic-banner__title {
+    font-size: 12px;
+  }
+
+  .nav__titanic-banner__sub {
+    display: none;
   }
 }
 

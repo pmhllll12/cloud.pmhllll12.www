@@ -145,6 +145,19 @@ export default function Nav() {
           >
             {"Today's 경기"}
           </button>
+          <Link
+            to="/lesson/titanic"
+            className="nav__titanic-banner"
+            aria-label="Lesson 페이지로 이동"
+          >
+            <span className="nav__titanic-banner__ship" aria-hidden>
+              🚢
+            </span>
+            <span className="nav__titanic-banner__text">
+              <span className="nav__titanic-banner__title">lesson</span>
+              <span className="nav__titanic-banner__sub">생존 예측 · ML</span>
+            </span>
+          </Link>
           {ui.sessionEmail ? (
             <>
               <span className="nav__session" title={ui.sessionEmail}>
