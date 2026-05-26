@@ -7,8 +7,8 @@ import react from "@vitejs/plugin-react";
 /** `vite.config.ts` 가 있는 폴더 = 프론트 루트 (실행 cwd 와 무관하게 index.html 위치 고정) */
 const FRONTEND_ROOT = path.dirname(fileURLToPath(import.meta.url));
 
-/** 개발 UI 포트 */
-const DEV_PORT = Number(process.env.VITE_DEV_PORT || 3000);
+/** 개발 UI 포트 — v0 환경에서는 5173 사용 */
+const DEV_PORT = Number(process.env.VITE_DEV_PORT || 5173);
 
 /** 백엔드 API 포트 — backend/apps 의 API_PORT 와 동일하게 */
 const API_PORT = Number(process.env.VITE_API_PORT || 8000);
