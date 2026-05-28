@@ -10,7 +10,7 @@
 | `rose_model` | `app/models/survival_classifier_model.py` |
 | `caledon_validation` | `app/validators/titanic_passenger_validator.py` |
 | (신규) 스키마·문제정의 | `schemas/titanic_schemas.py` |
-| CSV | `data/Titanic-Dataset.csv` |
+| 데모 데이터 | `app/demo_data.py` (파일 I/O 없음) |
 
 ## API
 

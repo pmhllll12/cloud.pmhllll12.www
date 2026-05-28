@@ -146,9 +146,9 @@ export default function Nav() {
             {"Today's 경기"}
           </button>
           <Link
-            to="/lesson/titanic"
+            to="/lesson"
             className="nav__titanic-banner"
-            aria-label="Lesson 페이지로 이동"
+            aria-label="Lesson 수업용 페이지로 이동"
           >
             <span className="nav__titanic-banner__ship" aria-hidden>
               🚢

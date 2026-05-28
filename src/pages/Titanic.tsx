@@ -3,27 +3,65 @@ import {
   useRef,
   useState,
   type ChangeEvent,
-  type DragEvent,
 } from "react";
 import "./Titanic.css";
 
 type TitanicProps = {
-  /** 수업용 레이아웃 등에서 상단 제목을 숨길 때 */
   hideOuterTitle?: boolean;
 };
 
-function isTitanicCsv(name: string): boolean {
-  return name.trim().toLowerCase() === "titanic.csv";
+function apiUrl(path: string): string {
+  const base = import.meta.env.VITE_API_BASE?.trim();
+  if (base) {
+    return `${base.replace(/\/$/, "")}${path}`;
+  }
+  return path;
 }
 
-async function readCsvPreview(file: File): Promise<{ rows: number; bytes: number }> {
-  const text = await file.text();
-  const lines = text.split(/\r?\n/).filter((line) => line.trim().length > 0);
-  const rows = Math.max(0, lines.length - 1);
-  return { rows, bytes: file.size };
+type UploadResponse = {
+  ok: boolean;
+  message: string;
+  filename: string;
+  row_count: number;
+  columns: string[];
+  preview: Record<string, unknown>[];
+};
+
+function parseApiError(
+  body: { detail?: string | { msg?: string }[] } | null,
+  status: number,
+): string {
+  if (body && typeof body === "object" && "detail" in body) {
+    if (typeof body.detail === "string") return body.detail;
+    if (Array.isArray(body.detail)) {
+      return body.detail
+        .map((d) => (typeof d === "object" && d?.msg ? d.msg : String(d)))
+        .join(", ");
+    }
+  }
+  return `요청에 실패했습니다. (${status})`;
 }
 
-const INPUT_ID = "titanic-csv-input";
+async function uploadJamesCsv(file: File): Promise<UploadResponse> {
+  const form = new FormData();
+  form.append("file", file, file.name);
+  const res = await fetch(apiUrl("/titanic/james/upload"), {
+    method: "POST",
+    body: form,
+  });
+  const body = (await res.json().catch(() => null)) as
+    | { detail?: string | { msg?: string }[] }
+    | UploadResponse
+    | null;
+  if (!res.ok) {
+    throw new Error(
+      parseApiError(body as { detail?: string | { msg?: string }[] } | null, res.status),
+    );
+  }
+  return body as UploadResponse;
+}
+
+const INPUT_ID = "titanic-james-csv-input";
 
 export default function Titanic({ hideOuterTitle = false }: TitanicProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -33,30 +71,24 @@ export default function Titanic({ hideOuterTitle = false }: TitanicProps) {
   const [ok, setOk] = useState<string | null>(null);
   const [pickedName, setPickedName] = useState<string | null>(null);
 
-  const resetMessages = () => {
+  const ingest = useCallback(async (file: File) => {
     setError(null);
     setOk(null);
-  };
-
-  const ingest = useCallback(async (file: File) => {
-    resetMessages();
     if (!file.name.toLowerCase().endsWith(".csv")) {
       setError("CSV 파일만 업로드할 수 있습니다.");
-      return;
-    }
-    if (!isTitanicCsv(file.name)) {
-      setError('파일 이름은 반드시 "titanic.csv" 여야 합니다.');
       return;
     }
     setBusy(true);
     setPickedName(file.name);
     try {
-      const { rows, bytes } = await readCsvPreview(file);
+      const data = await uploadJamesCsv(file);
+      const hasGender = data.columns.includes("gender");
       setOk(
-        `업로드 완료 · ${rows.toLocaleString()}행 (헤더 제외), ${(bytes / 1024).toFixed(1)} KB`,
+        `${data.message} · ${data.row_count.toLocaleString()}행, ${(file.size / 1024).toFixed(1)} KB` +
+          (hasGender ? " · Sex → gender 변환됨" : ""),
       );
-    } catch {
-      setError("파일을 읽는 중 오류가 발생했습니다.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "파일을 업로드하는 중 오류가 발생했습니다.");
     } finally {
       setBusy(false);
     }
@@ -66,24 +98,6 @@ export default function Titanic({ hideOuterTitle = false }: TitanicProps) {
     const f = e.target.files?.[0];
     e.target.value = "";
     if (f) void ingest(f);
-  };
-
-  const onDrop = (e: DragEvent<HTMLLabelElement>) => {
-    e.preventDefault();
-    setDragOver(false);
-    const f = e.dataTransfer.files?.[0];
-    if (f) void ingest(f);
-  };
-
-  const onDragOver = (e: DragEvent<HTMLLabelElement>) => {
-    e.preventDefault();
-    setDragOver(true);
-  };
-
-  const onDragLeave = () => setDragOver(false);
-
-  const openPicker = () => {
-    inputRef.current?.click();
   };
 
   return (
@@ -98,12 +112,11 @@ export default function Titanic({ hideOuterTitle = false }: TitanicProps) {
           aria-labelledby="titanic-upload-heading"
         >
           <h2 id="titanic-upload-heading" className="titanic-upload__heading">
-            Titanic 데이터
+            James — Titanic 데이터
           </h2>
           <p className="titanic-upload__lead">
-            <strong>업로드 창</strong>에 <code>titanic.csv</code> 를 끌어 놓거나 창을
-            클릭하거나, 아래 <strong>업로드 버튼</strong>으로 동일 파일을 선택할 수
-            있습니다.
+            Kaggle 형식의 Titanic CSV(예: <code>Titanic-Dataset.csv</code>)를
+            업로드합니다. <code>POST /titanic/james/upload</code>
           </p>
 
           <input
@@ -118,9 +131,17 @@ export default function Titanic({ hideOuterTitle = false }: TitanicProps) {
           <label
             htmlFor={INPUT_ID}
             className={`titanic-upload__zone${dragOver ? " titanic-upload__zone--active" : ""}${busy ? " titanic-upload__zone--busy" : ""}`}
-            onDrop={onDrop}
-            onDragOver={onDragOver}
-            onDragLeave={onDragLeave}
+            onDrop={(e) => {
+              e.preventDefault();
+              setDragOver(false);
+              const f = e.dataTransfer.files?.[0];
+              if (f) void ingest(f);
+            }}
+            onDragOver={(e) => {
+              e.preventDefault();
+              setDragOver(true);
+            }}
+            onDragLeave={() => setDragOver(false)}
           >
             <span className="titanic-upload__zone-icon" aria-hidden>
               ↑
@@ -129,7 +150,7 @@ export default function Titanic({ hideOuterTitle = false }: TitanicProps) {
             <span className="titanic-upload__zone-text">
               {pickedName
                 ? `선택된 파일: ${pickedName}`
-                : "titanic.csv 를 여기로 드래그하거나, 이 영역을 클릭하세요."}
+                : "Titanic CSV를 여기로 드래그하거나, 이 영역을 클릭하세요."}
             </span>
           </label>
 
@@ -138,7 +159,7 @@ export default function Titanic({ hideOuterTitle = false }: TitanicProps) {
               type="button"
               className="titanic-upload__btn"
               disabled={busy}
-              onClick={() => openPicker()}
+              onClick={() => inputRef.current?.click()}
             >
               {busy ? "처리 중…" : "업로드 버튼 (파일 선택)"}
             </button>

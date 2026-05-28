@@ -1,0 +1,130 @@
+.titanic-passengers {
+  padding: 24px;
+  background: #fff;
+}
+
+.titanic-passengers__heading {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.titanic-passengers__meta {
+  margin: 8px 0 20px;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.titanic-passengers__error {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #991b1b;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+}
+
+.titanic-passengers__loading,
+.titanic-passengers__empty {
+  margin: 0;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.titanic-passengers__table-wrap {
+  overflow-x: auto;
+  margin-bottom: 24px;
+}
+
+.titanic-passengers__table-wrap--dim {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.titanic-passengers__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.titanic-passengers__table th,
+.titanic-passengers__table td {
+  padding: 8px 10px;
+  border: 1px solid #e2e8f0;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.titanic-passengers__table th {
+  background: #f1f5f9;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.titanic-passengers__table tbody tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+.titanic-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-top: 8px;
+}
+
+.titanic-pagination__btn {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid #cbd5e1;
+  margin-left: -1px;
+  background: #fff;
+  color: #2563eb;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.titanic-pagination__btn:first-child {
+  margin-left: 0;
+  border-radius: 8px 0 0 8px;
+}
+
+.titanic-pagination__btn:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+.titanic-pagination__btn:hover:not(:disabled):not(.titanic-pagination__btn--active) {
+  background: #f1f5f9;
+}
+
+.titanic-pagination__btn--active {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+  z-index: 1;
+}
+
+.titanic-pagination__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.titanic-pagination__ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  margin-left: -1px;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #64748b;
+  font-size: 14px;
+}
