@@ -18,13 +18,16 @@ function apiUrl(path: string): string {
   return path;
 }
 
+/** `POST /titanic/james/upload` — 백엔드 `JamesDirectorUploadResponse` 와 동일 */
 type UploadResponse = {
-  ok: boolean;
+  ok?: boolean;
   message: string;
   filename: string;
   row_count: number;
-  columns: string[];
-  preview: Record<string, unknown>[];
+  note?: string;
+  /** 있으면 CSV 헤더 목록 (없을 수 있음 — `columns` 없이 응답하는 경우 대비) */
+  columns?: string[];
+  preview?: Record<string, unknown>[];
 };
 
 function parseApiError(
@@ -82,7 +85,8 @@ export default function Titanic({ hideOuterTitle = false }: TitanicProps) {
     setPickedName(file.name);
     try {
       const data = await uploadJamesCsv(file);
-      const hasGender = data.columns.includes("gender");
+      const cols = Array.isArray(data.columns) ? data.columns : [];
+      const hasGender = cols.includes("gender");
       setOk(
         `${data.message} · ${data.row_count.toLocaleString()}행, ${(file.size / 1024).toFixed(1)} KB` +
           (hasGender ? " · Sex → gender 변환됨" : ""),
