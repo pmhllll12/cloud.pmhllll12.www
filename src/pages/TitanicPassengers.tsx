@@ -45,6 +45,13 @@ export default function TitanicPassengers() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  /** 「2. 승객 목록」화면 진입 시 Walter 라우터 `introduce_myself` → 유스케이스·저장소 실행 */
+  useEffect(() => {
+    void fetch(apiUrl("/titanic/walter-roaster/myself"), { method: "GET" }).catch(() => {
+      /* Walter 호출 실패는 승객 표시와 별개 */
+    });
+  }, []);
+
   const loadPage = useCallback(async (targetPage: number) => {
     setBusy(true);
     setError(null);
