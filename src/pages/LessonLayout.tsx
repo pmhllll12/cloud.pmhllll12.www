@@ -162,6 +162,17 @@ export default function LessonLayout() {
               >
                 2. 승객 목록
               </NavLink>
+              <NavLink
+                to="/lesson/titanic/smith"
+                className={({ isActive }) =>
+                  isActive
+                    ? "lesson-sidebar__sublink lesson-sidebar__sublink--active"
+                    : "lesson-sidebar__sublink"
+                }
+                onClick={closeMenu}
+              >
+                3. 스미스 선장과 대화하기
+              </NavLink>
             </div>
           </details>
         </aside>

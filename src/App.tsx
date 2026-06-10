@@ -6,6 +6,7 @@ import LessonLayout from "./pages/LessonLayout";
 import LessonOverview from "./pages/LessonOverview";
 import LessonTitanic from "./pages/LessonTitanic";
 import LessonTitanicPassengers from "./pages/LessonTitanicPassengers";
+import LessonTitanicSmith from "./pages/LessonTitanicSmith";
 import "./App.css";
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
           <Route index element={<LessonOverview />} />
           <Route path="titanic" element={<LessonTitanic />} />
           <Route path="titanic/passengers" element={<LessonTitanicPassengers />} />
+          <Route path="titanic/smith" element={<LessonTitanicSmith />} />
         </Route>
         <Route path="/titanic" element={<Navigate to="/lesson/titanic" replace />} />
       </Routes>

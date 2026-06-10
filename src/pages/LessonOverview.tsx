@@ -79,7 +79,9 @@ export default function LessonOverview() {
       </div>
 
       <p className="lesson-overview__footer-hint">
-        실습 화면은 사이드바의 <strong>「1. 데이터 수집 및 실습」</strong>에서 열 수 있습니다.
+        실습 화면은 사이드바의 <strong>「1. 데이터 수집 및 실습」</strong>, 승객 표는{" "}
+        <strong>「2. 승객 목록」</strong>, 스미스 선장 API는 <strong>「3. 스미스 선장과 대화하기」</strong>에서
+        열 수 있습니다.
       </p>
     </article>
   );
