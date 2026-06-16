@@ -18,7 +18,7 @@ function apiUrl(path: string): string {
   return path;
 }
 
-/** `POST /titanic/james/upload` — 백엔드 `JamesDirectorUploadResponse` 와 동일 */
+/** `POST /api/titanic/james/upload` — 백엔드 `JamesDirectorUploadResponse` 와 동일 */
 type UploadResponse = {
   ok?: boolean;
   message: string;
@@ -48,7 +48,7 @@ function parseApiError(
 async function uploadJamesCsv(file: File): Promise<UploadResponse> {
   const form = new FormData();
   form.append("file", file, file.name);
-  const res = await fetch(apiUrl("/titanic/james/upload"), {
+  const res = await fetch(apiUrl("/api/titanic/james/upload"), {
     method: "POST",
     body: form,
   });
@@ -120,7 +120,7 @@ export default function Titanic({ hideOuterTitle = false }: TitanicProps) {
           </h2>
           <p className="titanic-upload__lead">
             Kaggle 형식의 Titanic CSV(예: <code>Titanic-Dataset.csv</code>)를
-            업로드합니다. <code>POST /titanic/james/upload</code>
+            업로드합니다. <code>POST /api/titanic/james/upload</code>
           </p>
 
           <input

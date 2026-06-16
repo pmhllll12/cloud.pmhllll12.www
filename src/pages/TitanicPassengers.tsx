@@ -47,7 +47,7 @@ export default function TitanicPassengers() {
 
   /** 「2. 승객 목록」화면 진입 시 Walter 라우터 `introduce_myself` → 유스케이스·저장소 실행 */
   useEffect(() => {
-    void fetch(apiUrl("/titanic/walter-roaster/myself"), { method: "GET" }).catch(() => {
+    void fetch(apiUrl("/api/titanic/walter-roaster/myself"), { method: "GET" }).catch(() => {
       /* Walter 호출 실패는 승객 표시와 별개 */
     });
   }, []);
@@ -60,7 +60,7 @@ export default function TitanicPassengers() {
         page: String(targetPage),
         page_size: String(PAGE_SIZE),
       });
-      const res = await fetch(apiUrl(`/titanic/james/passengers?${params}`));
+      const res = await fetch(apiUrl(`/api/titanic/james/passengers?${params}`));
       const body = (await res.json().catch(() => null)) as
         | { detail?: string }
         | PassengersPageResponse

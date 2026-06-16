@@ -50,10 +50,10 @@ function parseApiError(raw: string, status: number): string {
 }
 
 async function postSmithChat(message: string): Promise<SmithChatResponse> {
-  const res = await fetch(apiUrl("/titanic/smith/chat"), {
+  const res = await fetch(apiUrl("/api/titanic/smith/chat"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message }),
+    body: JSON.stringify({ messages}),
   });
   const raw = await res.text();
   if (!res.ok) {
@@ -138,7 +138,7 @@ export default function TitanicSmith() {
           스미스 선장과의 대화
         </h2>
         <p className="smith-chat__meta">
-          API: <code>POST /titanic/smith/chat</code>
+          API: <code>POST /api/titanic/smith/chat</code>
           {modelName ? (
             <>
               {" "}

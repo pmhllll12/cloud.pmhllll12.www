@@ -35,7 +35,7 @@ export default defineConfig(({ mode }) => {
     "/weather": { ...apiDevProxy },
     "/signup": { ...apiDevProxy },
     "/ping": { ...apiDevProxy },
-    "/titanic": { ...apiDevProxy },
+    "/api": { ...apiDevProxy },
     "/db-check": { ...apiDevProxy },
     "/google-gemini": {
       target: "https://generativelanguage.googleapis.com",
