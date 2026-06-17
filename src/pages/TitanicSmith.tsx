@@ -53,7 +53,7 @@ async function postSmithChat(message: string): Promise<SmithChatResponse> {
   const res = await fetch(apiUrl("/api/titanic/smith/chat"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ messages}),
+    body: JSON.stringify({ message }),
   });
   const raw = await res.text();
   if (!res.ok) {
