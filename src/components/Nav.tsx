@@ -146,6 +146,13 @@ export default function Nav() {
             {"Today's 경기"}
           </button>
           <Link
+            to="/admin"
+            className="nav__btn nav__btn--ghost"
+            aria-label="관리자 화면으로 이동"
+          >
+            관리자
+          </Link>
+          <Link
             to="/lesson"
             className="nav__titanic-banner"
             aria-label="Lesson 수업용 페이지로 이동"

@@ -1,0 +1,472 @@
+/* 모바일 퍼스트: 기본값은 모바일, 데스크톱은 min-width 미디어쿼리로 확장 */
+
+.admin {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  background: #eef1f6;
+  color: #1f2430;
+  font-size: 14px;
+}
+
+.admin__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  border: 0;
+  padding: 0;
+  background: rgba(15, 17, 26, 0.5);
+}
+
+/* 사이드바: 모바일에서는 슬라이드인 드로어 */
+.admin__sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 50;
+  width: min(78vw, 280px);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px 14px;
+  background: #1c2233;
+  border-right: 4px solid;
+  border-image: linear-gradient(180deg, #38bdf8, #ec4899) 1;
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+  overflow-y: auto;
+}
+
+.admin__sidebar--open {
+  transform: translateX(0);
+}
+
+.admin__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px 18px;
+  color: #f1f4fa;
+}
+
+.admin__brand-mark {
+  font-size: 22px;
+}
+
+.admin__brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.admin__brand-text small {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: #7c8597;
+}
+
+.admin__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin__nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  border: 0;
+  background: none;
+  color: #8a93a6;
+  padding: 11px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-align: left;
+  cursor: pointer;
+}
+
+.admin__nav-item--active {
+  background: rgba(56, 189, 248, 0.12);
+  color: #38e0e0;
+}
+
+.admin__nav-icon {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+}
+
+/* 메인 영역 */
+.admin__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.admin__topbar {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  color: #fff;
+  background: linear-gradient(120deg, #6d28d9 0%, #9333ea 35%, #db2777 75%, #ec4899 100%);
+}
+
+.admin__menu-btn {
+  flex: 0 0 auto;
+  border: 0;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.admin__topbar-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin__eyebrow {
+  margin: 0 0 2px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.admin__subtitle {
+  margin: 0;
+  font-size: 11px;
+  opacity: 0.85;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.admin__profile {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin__profile-name {
+  display: none;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.admin__profile-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+
+.admin__tabs {
+  display: flex;
+  gap: 18px;
+  padding: 10px 16px;
+  background: #fff;
+  border-bottom: 1px solid #e5e8ef;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.admin__tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.admin__tab {
+  position: relative;
+  flex: 0 0 auto;
+  border: 0;
+  background: none;
+  padding: 4px 0 11px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: #94a0b8;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.admin__tab--active {
+  color: #1f2430;
+  font-weight: 700;
+}
+
+.admin__tab--active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #6d28d9, #ec4899);
+}
+
+/* 카드 그리드 */
+.admin__grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  padding: 14px;
+}
+
+.admin-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(31, 36, 48, 0.06);
+}
+
+.admin-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.admin-card__title {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #94a0b8;
+}
+
+.admin-card__hint {
+  margin: 4px 0 0;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #5b6478;
+}
+
+.admin-card__more {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid #e5e8ef;
+  background: #f6f7fb;
+  color: #94a0b8;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.admin-card__big-number {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.admin-area-chart {
+  display: block;
+  width: 100%;
+  height: 90px;
+}
+
+.admin-card__donut-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 0;
+}
+
+.admin-ring__label {
+  font-weight: 800;
+  fill: #1f2430;
+}
+
+.admin-rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-row__box {
+  flex: 1;
+  min-width: 0;
+  background: #f6f7fb;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #1f2430;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-row__dot {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ec4899, #38bdf8);
+}
+
+.admin-row__label {
+  flex: 0 0 auto;
+  max-width: 64px;
+  font-size: 10px;
+  color: #94a0b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 120px;
+  padding-top: 8px;
+}
+
+.admin-bar-chart__col {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.admin-bar-chart__bar {
+  width: 60%;
+  max-width: 16px;
+  border-radius: 6px 6px 2px 2px;
+  background: linear-gradient(180deg, #ec4899, #38bdf8);
+}
+
+.admin-bar-chart__year {
+  font-size: 9px;
+  color: #94a0b8;
+}
+
+.admin-card__paragraph {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #5b6478;
+}
+
+.admin-thin-bars {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-thin-bars__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-thin-bars__label {
+  flex: 0 0 88px;
+  font-size: 10px;
+  color: #94a0b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-thin-bars__track {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: #eef0f5;
+  overflow: hidden;
+}
+
+.admin-thin-bars__fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #6d28d9, #ec4899);
+}
+
+.admin-card--mini-rings {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  padding: 22px 12px;
+}
+
+/* 데스크톱: 정적 사이드바 + 2열 카드 그리드 */
+@media (min-width: 900px) {
+  .admin {
+    flex-direction: row;
+  }
+
+  .admin__overlay {
+    display: none;
+  }
+
+  .admin__sidebar {
+    position: sticky;
+    top: 0;
+    flex: 0 0 230px;
+    width: 230px;
+    height: 100vh;
+    transform: none;
+  }
+
+  .admin__menu-btn {
+    display: none;
+  }
+
+  .admin__topbar {
+    padding: 22px 28px;
+  }
+
+  .admin__tabs {
+    padding: 12px 28px;
+  }
+
+  .admin__grid {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    gap: 20px;
+    padding: 22px 28px 32px;
+  }
+}
+
+@media (min-width: 480px) {
+  .admin__profile-name {
+    display: inline;
+  }
+}
