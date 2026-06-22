@@ -1,7 +1,8 @@
+"use client";
+
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { getHighlightMatch } from "../data/worldCup2026Schedule";
-import { koTeam } from "../data/worldCup2026Ko";
-import "./HeroPredictionPanel.css";
+import { getHighlightMatch } from "@/data/worldCup2026Schedule";
+import { koTeam } from "@/data/worldCup2026Ko";
 
 const LS_POINTS = "wc_gamify_points";
 const LS_VOTES = "wc_gamify_votes";
@@ -95,6 +96,14 @@ type HeroPredictionPanelProps = {
   onAiPreset?: (text: string) => void;
 };
 
+const CARD = "p-[14px_14px_12px] rounded-xl bg-[rgba(4,10,22,0.55)] border border-[rgba(148,163,184,0.12)]";
+const CARD_TITLE =
+  "mb-2 text-[13px] font-extrabold tracking-[0.04em] uppercase text-[rgba(34,211,238,0.95)]";
+const CARD_SUB = "mb-[10px] text-xs text-[rgba(148,163,184,0.95)]";
+const PICK_BASE =
+  "flex-1 min-w-[72px] rounded-[10px] border border-[rgba(255,255,255,0.18)] bg-[rgba(255,255,255,0.04)] text-fg-0 font-bold cursor-pointer transition hover:border-[rgba(34,211,238,0.55)] hover:bg-[rgba(34,211,238,0.08)]";
+const PICK_ON = "border-accent text-accent bg-[rgba(34,211,238,0.12)]";
+
 export default function HeroPredictionPanel({
   onAiPreset,
 }: HeroPredictionPanelProps) {
@@ -103,20 +112,16 @@ export default function HeroPredictionPanel({
   const homeKo = koTeam(match.home);
   const awayKo = koTeam(match.away);
 
-  const [points] = useState(readPoints);
-  const [totals, setTotals] = useState(() => {
-    const bag = readVotes();
-    const key = String(mid);
-    return bag[key] ?? seedTotals(mid);
-  });
-  const [userVote, setUserVote] = useState<Pick | null>(() =>
-    readSessionVote(mid),
-  );
-  const [picks, setPicks] = useState(readPicks);
+  const [points, setPoints] = useState(1000);
+  const [totals, setTotals] = useState(() => seedTotals(mid));
+  const [userVote, setUserVote] = useState<Pick | null>(null);
+  const [picks, setPicks] = useState<PickRow[]>([]);
   const [lastPick, setLastPick] = useState<Pick | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
+  /* localStorage 는 클라이언트에만 있어 SSR과 다를 수 있으므로 마운트 후에 읽는다 */
   useEffect(() => {
+    setPoints(readPoints());
     const bag = readVotes();
     const key = String(mid);
     setTotals(bag[key] ?? seedTotals(mid));
@@ -186,35 +191,46 @@ export default function HeroPredictionPanel({
   }, [aiPrompt, onAiPreset, showToast]);
 
   return (
-    <div id="today" className="pred-panel" aria-labelledby="pred-panel-title">
-      <div className="pred-panel__head">
-        <h2 id="pred-panel-title" className="pred-panel__title">
-          예측 · 게임화 <span className="pred-panel__tag">가상 P</span>
+    <div
+      id="today"
+      className="mb-7 p-[16px_14px_14px] 720:p-[20px_20px_18px] rounded-2xl bg-[rgba(8,14,28,0.72)] border border-[rgba(34,211,238,0.22)] shadow-[0_18px_48px_rgba(0,0,0,0.28)] max-w-full box-border"
+      aria-labelledby="pred-panel-title"
+    >
+      <div className="flex flex-wrap items-baseline justify-between gap-3 mb-[10px]">
+        <h2 id="pred-panel-title" className="m-0 text-[17px] font-extrabold tracking-[-0.02em] text-fg-0">
+          예측 · 게임화{" "}
+          <span className="ml-2 px-2 py-0.5 rounded-md text-[11px] font-extrabold text-[#04131a] bg-[linear-gradient(135deg,#22d3ee,#38bdf8)] align-middle">
+            가상 P
+          </span>
         </h2>
-        <p className="pred-panel__points" aria-live="polite">
-          <strong>{points.toLocaleString("ko-KR")} P</strong>
-          <span className="pred-panel__points-hint">
+        <p className="m-0 text-sm text-fg-1 text-left w-full 640:text-right 640:w-auto" aria-live="polite">
+          <strong className="text-[22px] font-extrabold text-accent tracking-[-0.02em]">
+            {points.toLocaleString("ko-KR")} P
+          </strong>
+          <span className="block mt-1 text-[11px] font-medium text-[rgba(148,163,184,0.95)] max-w-none ml-0 640:max-w-[320px] 640:ml-auto">
             시작 1,000P · 적중 + / 미적중 − (결과 연동 시) ·{" "}
-            <em>현금·배팅 아님</em>
+            <em className="not-italic text-[#fda4af]">현금·배팅 아님</em>
           </span>
         </p>
       </div>
 
-      <p className="pred-panel__law">
+      <p className="mb-4 text-xs leading-[1.55] text-[rgba(203,213,225,0.88)]">
         규제 부담이 적은 <strong>예측 + 게임화</strong>로 오래 즐기는 구조를
         지향합니다. 경품·기프티콘은 별도 <strong>이벤트 공지·조건</strong> 하에만
         운영하세요.
       </p>
 
-      <div className="pred-panel__grid">
-        <section className="pred-card" aria-labelledby="pred-today-title">
-          <h3 id="pred-today-title" className="pred-card__title">
+      <div className="grid grid-cols-1 640:grid-cols-2 gap-3">
+        <section className={CARD} aria-labelledby="pred-today-title">
+          <h3 id="pred-today-title" className={CARD_TITLE}>
             오늘 경기 예측하기
           </h3>
-          <p className="pred-card__match">
-            {homeKo} <span className="pred-card__vs">대</span> {awayKo}
+          <p className="mb-[10px] text-[15px] font-bold text-fg-0">
+            {homeKo}{" "}
+            <span className="font-semibold text-[rgba(148,163,184,0.95)] px-1">대</span>{" "}
+            {awayKo}
           </p>
-          <div className="pred-card__btns">
+          <div className="flex flex-wrap gap-2">
             {(
               [
                 ["H", "홈 승"],
@@ -225,48 +241,46 @@ export default function HeroPredictionPanel({
               <button
                 key={k}
                 type="button"
-                className={`pred-pick${lastPick === k ? " pred-pick--on" : ""}`}
+                className={`${PICK_BASE} p-[10px_12px] text-sm ${lastPick === k ? PICK_ON : ""}`}
                 onClick={() => onPredict(k)}
               >
                 {label}
               </button>
             ))}
           </div>
-          <p className="pred-card__fine">
+          <p className="mt-[10px] text-[11px] text-[rgba(148,163,184,0.85)]">
             클릭 1번으로 저장 · 이 기기 기준 누적 예측{" "}
             <strong>{pickCount}회</strong> (이 경기)
           </p>
         </section>
 
-        <section className="pred-card" aria-labelledby="pred-vote-title">
-          <h3 id="pred-vote-title" className="pred-card__title">
+        <section className={CARD} aria-labelledby="pred-vote-title">
+          <h3 id="pred-vote-title" className={CARD_TITLE}>
             실시간 투표
           </h3>
-          <p className="pred-card__sub">
-            홈 / 무 / 원정 비율 (브라우저 간 누적 데모)
-          </p>
-          <div className="pred-vote__bar" role="img" aria-label="투표 비율 막대">
+          <p className={CARD_SUB}>홈 / 무 / 원정 비율 (브라우저 간 누적 데모)</p>
+          <div className="flex h-[10px] rounded-full overflow-hidden bg-[rgba(255,255,255,0.06)] mb-2" role="img" aria-label="투표 비율 막대">
             <span
-              className="pred-vote__seg pred-vote__seg--h"
+              className="h-full min-w-[2px] transition-[width] duration-[250ms] bg-[linear-gradient(90deg,#22d3ee,#06b6d4)]"
               style={{ width: `${pct.H}%` }}
             />
             <span
-              className="pred-vote__seg pred-vote__seg--d"
+              className="h-full min-w-[2px] transition-[width] duration-[250ms] bg-[linear-gradient(90deg,#94a3b8,#64748b)]"
               style={{ width: `${pct.D}%` }}
             />
             <span
-              className="pred-vote__seg pred-vote__seg--a"
+              className="h-full min-w-[2px] transition-[width] duration-[250ms] bg-[linear-gradient(90deg,#a78bfa,#7c3aed)]"
               style={{ width: `${pct.A}%` }}
             />
           </div>
-          <p className="pred-vote__pct">
+          <p className="mb-2 text-xs text-fg-1 [&_strong]:text-fg-0">
             홈 <strong>{pct.H}%</strong> · 무 <strong>{pct.D}%</strong> · 원정{" "}
             <strong>{pct.A}%</strong>
             {userVote ? (
-              <span className="pred-vote__you"> · 내 선택 반영됨</span>
+              <span className="text-accent font-semibold"> · 내 선택 반영됨</span>
             ) : null}
           </p>
-          <div className="pred-card__btns pred-card__btns--sm">
+          <div className="flex flex-wrap gap-2">
             {(
               [
                 ["H", "홈"],
@@ -277,7 +291,7 @@ export default function HeroPredictionPanel({
               <button
                 key={k}
                 type="button"
-                className={`pred-pick pred-pick--ghost${userVote === k ? " pred-pick--on" : ""}`}
+                className={`${PICK_BASE} bg-transparent p-[8px_12px] text-[13px] ${userVote === k ? PICK_ON : ""}`}
                 onClick={() => applyVote(k)}
               >
                 {label}
@@ -286,11 +300,14 @@ export default function HeroPredictionPanel({
           </div>
         </section>
 
-        <section className="pred-card pred-card--span" aria-labelledby="pred-rank-title">
-          <h3 id="pred-rank-title" className="pred-card__title">
+        <section
+          className={`${CARD} [grid-column:auto] 640:[grid-column:1/-1]`}
+          aria-labelledby="pred-rank-title"
+        >
+          <h3 id="pred-rank-title" className={CARD_TITLE}>
             랭킹 · 내 적중률 · 보상
           </h3>
-          <ul className="pred-rank__list">
+          <ul className="m-0 pl-[18px] text-sm leading-[1.55] text-[rgba(226,232,240,0.92)] [&>li]:mb-1.5 [&>li:last-child]:mb-0">
             <li>
               <strong>오늘 적중률 1위</strong> ·{" "}
               <strong>주간 TOP 10</strong> ·{" "}
@@ -308,23 +325,33 @@ export default function HeroPredictionPanel({
           </ul>
         </section>
 
-        <section className="pred-card pred-card--ai" aria-labelledby="pred-ai-title">
-          <div className="pred-card--ai__copy">
-            <h3 id="pred-ai-title" className="pred-card__title">
+        <section
+          className={`${CARD} flex flex-wrap flex-col 640:flex-row items-start 640:items-center justify-between gap-3 [grid-column:auto] 640:[grid-column:1/-1]`}
+          aria-labelledby="pred-ai-title"
+        >
+          <div className="flex-1 min-w-0">
+            <h3 id="pred-ai-title" className={`${CARD_TITLE} mb-1`}>
               AI 승부 예측
             </h3>
-            <p className="pred-card__sub">
+            <p className={CARD_SUB}>
               오른쪽 <strong>Gemini</strong>로 승리 확률·예상 스코어 질문
             </p>
           </div>
-          <button type="button" className="pred-ai__btn" onClick={onAiClick}>
+          <button
+            type="button"
+            className="flex-shrink-0 p-[10px_18px] rounded-full border border-[rgba(34,211,238,0.55)] bg-[rgba(34,211,238,0.14)] text-accent font-extrabold text-[13px] cursor-pointer transition hover:bg-[rgba(34,211,238,0.24)] hover:-translate-y-px"
+            onClick={onAiClick}
+          >
             AI에게 이 경기 물어보기 →
           </button>
         </section>
       </div>
 
       {toast ? (
-        <p className="pred-panel__toast" role="status">
+        <p
+          className="mt-[14px] p-[10px_12px] rounded-[10px] text-xs text-[#0f172a] bg-[rgba(34,211,238,0.92)] font-semibold"
+          role="status"
+        >
           {toast}
         </p>
       ) : null}

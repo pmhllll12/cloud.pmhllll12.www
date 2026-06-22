@@ -11,8 +11,8 @@ Cursor에서 `@vault/DevOps/Frontend/REACT_RULES.md` 첨부 후 작업한다.
 ## 1. 스코프
 
 - `www/src/**` 만 수정. 백엔드는 `minho/` (API 계약 변경 시 양쪽 맞출 것).
-- API 호출은 **상대 경로** + Vite 프록시 (`/titanic`, …).
-- 포트 **3000 고정**; 5173 미사용.
+- API 호출은 **상대 경로** + Next.js `rewrites` 프록시 (`/api/titanic`, …).
+- 포트 **3000 고정**.
 
 ## 2. 검증
 

@@ -1,10 +1,8 @@
+"use client";
+
 import { useMemo } from "react";
-import { koTeam } from "../data/worldCup2026Ko";
-import {
-  getSouthKoreaWinPct,
-  getWinProbabilities,
-} from "../data/wc2026WinModel";
-import "./WorldCupStatsSection.css";
+import { koTeam } from "@/data/worldCup2026Ko";
+import { getSouthKoreaWinPct, getWinProbabilities } from "@/data/wc2026WinModel";
 
 export default function WorldCupStatsSection() {
   const rows = useMemo(() => getWinProbabilities(), []);
@@ -13,17 +11,21 @@ export default function WorldCupStatsSection() {
   return (
     <section
       id="stats"
-      className="wc-stats"
+      className="[scroll-margin-top:96px] p-[48px_0_80px] border-t border-[rgba(148,163,184,0.12)]"
       aria-labelledby="wc-stats-heading"
     >
-      <div className="wc-stats__inner">
-        <h2 id="wc-stats-heading" className="wc-stats__title">
+      <div className="max-w-[720px] w-full mx-auto box-border">
+        <h2 id="wc-stats-heading" className="mb-5 text-[clamp(1.35rem,2.5vw,1.6rem)] font-extrabold tracking-[-0.02em] text-fg-0">
           통계
         </h2>
 
-        <div className="wc-stats__history" role="region" aria-label="역대 월드컵 요약">
-          <h3 className="wc-stats__history-title">역대 본선 기준 요약</h3>
-          <ul className="wc-stats__history-list">
+        <div
+          className="mb-6 p-[16px_18px] rounded-xl border border-[rgba(148,163,184,0.16)] bg-[rgba(6,10,18,0.55)]"
+          role="region"
+          aria-label="역대 월드컵 요약"
+        >
+          <h3 className="mb-[10px] text-sm font-extrabold text-accent">역대 본선 기준 요약</h3>
+          <ul className="m-0 pl-[1.1rem] text-[13px] leading-[1.65] text-[rgba(226,232,240,0.9)] [&>li+li]:mt-2">
             <li>
               <strong>우승 횟수</strong>: 브라질 5회, 독일·이탈리아 각 4회, 아르헨티나 3회,
               프랑스·우루과이 각 2회, 잉글랜드·스페인 각 1회(2026 시점 역대 통계).
@@ -40,27 +42,34 @@ export default function WorldCupStatsSection() {
           </ul>
         </div>
 
-        <div className="wc-stats__kr" role="status">
-          <p className="wc-stats__kr-label">모델 기준 대한민국 우승 확률</p>
-          <p className="wc-stats__kr-value">
-            <span className="wc-stats__kr-num">{krPct.toFixed(1)}</span>
-            <span className="wc-stats__kr-unit">%</span>
+        <div
+          className="mb-7 p-[18px_20px] rounded-2xl border border-[rgba(0,229,255,0.35)] bg-[linear-gradient(135deg,rgba(0,229,255,0.12),rgba(8,14,22,0.9))]"
+          role="status"
+        >
+          <p className="mb-[6px] text-[13px] font-bold text-[rgba(226,232,240,0.88)]">모델 기준 대한민국 우승 확률</p>
+          <p className="m-0 flex items-baseline gap-1">
+            <span className="text-[clamp(2rem,5vw,2.75rem)] font-black [font-variant-numeric:tabular-nums] text-accent tracking-[-0.03em]">
+              {krPct.toFixed(1)}
+            </span>
+            <span className="text-xl font-extrabold text-[rgba(226,232,240,0.85)]">%</span>
           </p>
         </div>
 
-        <h3 className="wc-stats__table-title">참가국별 우승 확률 추정 (%)</h3>
-        <p className="wc-stats__table-sub">
+        <h3 className="mb-[6px] text-[15px] font-extrabold text-fg-0">참가국별 우승 확률 추정 (%)</h3>
+        <p className="mb-3 text-xs text-[rgba(148,163,184,0.95)]">
           2026 본선 48개 대표팀 · 합계 100.0% · 소수 첫째 자리
         </p>
 
-        <div className="wc-stats__table-wrap">
-          <table className="wc-stats__table">
+        <div className="overflow-x-auto rounded-xl border border-[rgba(148,163,184,0.14)]">
+          <table className="w-full border-collapse text-[13px] [&_thead]:bg-[rgba(8,14,22,0.95)] [&_th]:p-[10px_12px] [&_th]:text-left [&_th]:font-extrabold [&_th]:text-[rgba(226,232,240,0.92)] [&_th]:border-b [&_th]:border-[rgba(148,163,184,0.15)] [&_td]:p-[8px_12px] [&_td]:border-b [&_td]:border-[rgba(148,163,184,0.08)] [&_td]:text-[rgba(241,245,249,0.92)] [&_tbody_tr:nth-child(even)_td]:bg-[rgba(255,255,255,0.02)]">
             <thead>
               <tr>
-                <th scope="col">순위</th>
+                <th scope="col" className="pr-[6px] 520:pr-3">
+                  순위
+                </th>
                 <th scope="col">국가</th>
                 <th scope="col">확률</th>
-                <th scope="col" className="wc-stats__th-bar">
+                <th scope="col" className="w-[38%] min-w-[120px]">
                   비교
                 </th>
               </tr>
@@ -71,16 +80,13 @@ export default function WorldCupStatsSection() {
                 const w = max > 0 ? Math.min(100, (r.pct / max) * 100) : 0;
                 const isKr = r.code === "South Korea";
                 return (
-                  <tr
-                    key={r.code}
-                    className={isKr ? "wc-stats__row wc-stats__row--kr" : "wc-stats__row"}
-                  >
-                    <td>{i + 1}</td>
+                  <tr key={r.code} className={isKr ? "[&_td]:bg-[rgba(0,229,255,0.08)] [&_td]:font-bold" : ""}>
+                    <td className="pr-[6px] 520:pr-3">{i + 1}</td>
                     <td>{koTeam(r.code)}</td>
-                    <td className="wc-stats__pct">{r.pct.toFixed(1)}%</td>
-                    <td className="wc-stats__bar-cell">
+                    <td className="[font-variant-numeric:tabular-nums] whitespace-nowrap">{r.pct.toFixed(1)}%</td>
+                    <td className="align-middle">
                       <span
-                        className="wc-stats__bar"
+                        className="block h-[6px] rounded min-w-1 bg-[linear-gradient(90deg,rgba(0,229,255,0.55),rgba(34,211,238,0.25))]"
                         style={{ width: `${w}%` }}
                         aria-hidden
                       />

@@ -1,3 +1,5 @@
+"use client";
+
 import {
   useCallback,
   useEffect,
@@ -7,7 +9,6 @@ import {
   type FormEvent,
 } from "react";
 import { createPortal } from "react-dom";
-import "./LoginModal.css";
 
 export type AuthModalVariant = "login" | "signup";
 
@@ -27,9 +28,9 @@ function normalizePhone(raw: string): string {
   return raw.replace(/\D/g, "");
 }
 
-/** 회원가입 API — dev 는 Vite 프록시 /signup → backend (기본 포트 8000). */
+/** 회원가입 API — dev 는 next.config.ts rewrites 가 /signup → backend (기본 포트 8000) 로 프록시. */
 function getApiBase(): string {
-  const base = import.meta.env.VITE_API_BASE?.trim();
+  const base = process.env.NEXT_PUBLIC_API_BASE?.trim();
   if (base) return base.replace(/\/$/, "");
   return "";
 }
@@ -160,6 +161,12 @@ function formDataToStringRecord(fd: FormData): Record<string, string> {
   }
   return out;
 }
+
+const FIELD = "mb-4";
+const LABEL =
+  "block mb-[6px] text-xs font-bold tracking-[0.04em] uppercase text-[rgba(148,163,184,0.95)]";
+const INPUT =
+  "w-full p-[12px_14px] rounded-[10px] border border-[rgba(148,163,184,0.25)] bg-[rgba(4,7,15,0.75)] text-white text-[15px] transition placeholder:text-[rgba(100,116,139,0.9)] focus:outline-none focus:border-[#00e5ff] focus:shadow-[0_0_0_2px_rgba(0,229,255,0.2)]";
 
 export default function LoginModal({
   open,
@@ -354,27 +361,29 @@ export default function LoginModal({
 
   return createPortal(
     <div
-      className="login-modal-backdrop"
+      className="fixed inset-0 z-[9999] flex flex-col items-center justify-start pt-[max(20px,calc(env(safe-area-inset-top,0px)+16px))] px-4 pb-[max(24px,env(safe-area-inset-bottom,0px))] overflow-x-hidden overflow-y-auto [overscroll-behavior:contain] bg-[rgba(0,0,0,0.65)] backdrop-blur-md"
       role="presentation"
       onMouseDown={handleBackdropMouseDown}
     >
       <div
-        className="login-modal"
+        className="w-full max-w-[400px] flex-shrink-0 mt-0 mb-6 p-[28px_28px_24px] rounded-2xl bg-[rgba(10,16,32,0.96)] border border-[rgba(0,229,255,0.28)] shadow-[0_0_0_1px_rgba(0,229,255,0.1),0_24px_48px_rgba(0,0,0,0.45)] max-h-[calc(100dvh-48px)] overflow-y-auto"
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <div className="login-modal__head">
+        <div className="flex items-start justify-between gap-3 mb-5">
           <div>
-            <h2 id={titleId} className="login-modal__title">
+            <h2 id={titleId} className="m-0 text-xl font-extrabold text-white tracking-[-0.02em]">
               {title}
             </h2>
-            <p className="login-modal__subtitle">{subtitle}</p>
+            <p className="mt-[6px] mb-0 text-[13px] leading-[1.5] text-[rgba(203,213,225,0.9)]">
+              {subtitle}
+            </p>
           </div>
           <button
             type="button"
-            className="login-modal__close"
+            className="flex-shrink-0 w-9 h-9 inline-flex items-center justify-center border-none rounded-[10px] bg-[rgba(255,255,255,0.06)] text-[rgba(255,255,255,0.85)] text-2xl leading-none cursor-pointer transition hover:bg-[rgba(0,229,255,0.12)] hover:text-[#00e5ff]"
             onClick={onClose}
             aria-label="닫기"
           >
@@ -385,14 +394,14 @@ export default function LoginModal({
         <form onSubmit={handleSubmit} noValidate>
           {isSignup ? (
             <>
-              <div className="login-modal__field">
-                <label htmlFor="auth-user-id" className="login-modal__label">
+              <div className={FIELD}>
+                <label htmlFor="auth-user-id" className={LABEL}>
                   아이디 (userId)
                 </label>
                 <input
                   ref={userIdRef}
                   id="auth-user-id"
-                  className="login-modal__input"
+                  className={INPUT}
                   type="text"
                   name="userId"
                   autoComplete="username"
@@ -401,13 +410,13 @@ export default function LoginModal({
                   onChange={(ev) => patch({ userId: ev.target.value })}
                 />
               </div>
-              <div className="login-modal__field">
-                <label htmlFor="auth-nickname" className="login-modal__label">
+              <div className={FIELD}>
+                <label htmlFor="auth-nickname" className={LABEL}>
                   닉네임
                 </label>
                 <input
                   id="auth-nickname"
-                  className="login-modal__input"
+                  className={INPUT}
                   type="text"
                   name="nickname"
                   autoComplete="nickname"
@@ -416,13 +425,13 @@ export default function LoginModal({
                   onChange={(ev) => patch({ nickname: ev.target.value })}
                 />
               </div>
-              <div className="login-modal__field">
-                <label htmlFor="auth-phone" className="login-modal__label">
+              <div className={FIELD}>
+                <label htmlFor="auth-phone" className={LABEL}>
                   휴대전화
                 </label>
                 <input
                   id="auth-phone"
-                  className="login-modal__input"
+                  className={INPUT}
                   type="tel"
                   name="phone"
                   autoComplete="tel"
@@ -434,14 +443,14 @@ export default function LoginModal({
               </div>
             </>
           ) : null}
-          <div className="login-modal__field">
-            <label htmlFor="auth-email" className="login-modal__label">
+          <div className={FIELD}>
+            <label htmlFor="auth-email" className={LABEL}>
               {isSignup ? "이메일" : "이메일 (아이디)"}
             </label>
             <input
               ref={emailRef}
               id="auth-email"
-              className="login-modal__input"
+              className={INPUT}
               type="email"
               name="email"
               autoComplete="email"
@@ -451,13 +460,13 @@ export default function LoginModal({
               onChange={(ev) => patch({ email: ev.target.value })}
             />
           </div>
-          <div className="login-modal__field">
-            <label htmlFor="auth-password" className="login-modal__label">
+          <div className={FIELD}>
+            <label htmlFor="auth-password" className={LABEL}>
               비밀번호
             </label>
             <input
               id="auth-password"
-              className="login-modal__input"
+              className={INPUT}
               type="password"
               name="password"
               autoComplete={isSignup ? "new-password" : "current-password"}
@@ -467,13 +476,13 @@ export default function LoginModal({
             />
           </div>
           {isSignup ? (
-            <div className="login-modal__field">
-              <label htmlFor="auth-password2" className="login-modal__label">
+            <div className={FIELD}>
+              <label htmlFor="auth-password2" className={LABEL}>
                 비밀번호 확인
               </label>
               <input
                 id="auth-password2"
-                className="login-modal__input"
+                className={INPUT}
                 type="password"
                 name="passwordConfirm"
                 autoComplete="new-password"
@@ -484,18 +493,18 @@ export default function LoginModal({
             </div>
           ) : null}
           {state.error ? (
-            <p className="login-modal__error" role="alert">
+            <p className="mt-[-8px] mb-[14px] text-[13px] text-[#fecaca] leading-[1.45]" role="alert">
               {state.error}
             </p>
           ) : null}
           <button
             type="submit"
-            className="login-modal__submit"
+            className="w-full mt-2 p-[14px_20px] border-none rounded-full font-extrabold text-[15px] tracking-[0.02em] cursor-pointer bg-[#00e5ff] text-[#04131a] transition enabled:hover:bg-[#33ebff] enabled:hover:-translate-y-px disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={state.submitting}
           >
             {state.submitting ? "처리 중…" : isSignup ? "회원가입" : "로그인"}
           </button>
-          <p className="login-modal__hint">
+          <p className="mt-4 mb-0 text-xs leading-[1.5] text-[rgba(148,163,184,0.85)] text-center">
             {isSignup
               ? "회원가입 시 POST /signup 으로 전송됩니다. 터미널에서 수신 로그를 확인하세요."
               : "데모 로그인입니다."}

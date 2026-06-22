@@ -1,5 +1,6 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import "./NavWeather.css";
 
 type WeatherApi = {
   city: string;
@@ -17,7 +18,7 @@ const REFRESH_MS = 15 * 60 * 1000;
 const MINT = "#00e5ff";
 
 function getWeatherUrl(): string {
-  const base = import.meta.env.VITE_API_BASE;
+  const base = process.env.NEXT_PUBLIC_API_BASE;
   if (typeof base === "string" && base.trim()) {
     return `${base.replace(/\/$/, "")}/weather`;
   }
@@ -41,7 +42,7 @@ function pickIconKind(icon: string, description: string): string {
 
 function WeatherIcon({ kind }: { kind: string }) {
   const props = {
-    className: "nav-weather__icon-svg",
+    className: "flex-shrink-0 [filter:drop-shadow(0_0_6px_rgba(0,229,255,0.45))]",
     width: 22,
     height: 22,
     viewBox: "0 0 24 24",
@@ -191,11 +192,21 @@ export default function NavWeather() {
         : weather.message ?? "서울 날씨를 불러올 수 없습니다";
 
   return (
-    <div className="nav-weather" title={title} aria-label={title}>
-      <span className="nav-weather__city">서울</span>
+    <div
+      className="inline-flex items-center gap-[6px] 720:gap-2 ml-auto 720:ml-3 p-[5px_10px] 720:p-[6px_14px] rounded-full border border-[rgba(0,229,255,0.35)] bg-[rgba(0,229,255,0.08)] shadow-[0_0_12px_rgba(0,229,255,0.12)] flex-shrink-0"
+      title={title}
+      aria-label={title}
+    >
+      <span className="hidden 720:inline text-xs font-semibold tracking-[0.04em] text-[rgba(255,255,255,0.75)]">
+        서울
+      </span>
       <WeatherIcon kind={iconKind} />
       <span
-        className={`nav-weather__temp${weather.status !== "ok" ? " nav-weather__temp--muted" : ""}`}
+        className={
+          weather.status !== "ok"
+            ? "text-[15px] font-semibold leading-none [font-variant-numeric:tabular-nums] text-[rgba(0,229,255,0.45)]"
+            : "text-[15px] font-extrabold leading-none [font-variant-numeric:tabular-nums] text-[#00e5ff]"
+        }
       >
         {tempText}
       </span>

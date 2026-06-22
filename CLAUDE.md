@@ -1,6 +1,6 @@
 # 프론트엔드 (`www`) — LLM 코딩 지침
 
-Vite + React UI. 개발·프리뷰 포트는 **3000 고정** ([`vite.config.ts`](vite.config.ts)).
+Next.js (App Router) + Tailwind v4 UI. 개발·프리뷰 포트는 **3000 고정** ([`package.json`](package.json) 스크립트, [`next.config.ts`](next.config.ts)).
 
 공통 4원칙 전문 ---> [`../vault/CLAUDE.md`](../vault/CLAUDE.md)  
 모노레포 지도 ---> [`../CLAUDE.md`](../CLAUDE.md)
@@ -24,15 +24,15 @@ npm run dev
 
 ## API 프록시
 
-[`vite.config.ts`](vite.config.ts) 가 아래를 백엔드(`VITE_API_PORT`, 기본 8000)로 프록시한다.
+[`next.config.ts`](next.config.ts) 의 `rewrites()` 가 아래를 백엔드(`API_PORT`, 기본 8000)로 프록시한다.
 
 | 경로 | 용도 |
 |------|------|
-| `/titanic` | 타이타닉 API |
-| `/chat`, `/signup`, `/ping`, `/weather` | 공통 API |
+| `/api/*` (예: `/api/titanic/...`) | 타이타닉 등 API |
+| `/chat`, `/signup`, `/ping`, `/weather`, `/db-check` | 공통 API |
 
-- 프론트 `fetch`는 **상대 경로** 우선: `fetch("/titanic/smith/chat", …)`.
-- `VITE_API_BASE`는 LAN·정적 빌드에서만 필요 ([`.env.example`](.env.example)).
+- 프론트 `fetch`는 **상대 경로** 우선: `fetch("/api/titanic/smith/chat", …)`.
+- `NEXT_PUBLIC_API_BASE`는 LAN·정적 빌드에서만 필요 ([`.env.example`](.env.example)).
 
 Docker: 브라우저는 **`localhost:3000`만** 호출하고, gateway가 백엔드로 넘긴다.
 
@@ -42,10 +42,10 @@ Docker: 브라우저는 **`localhost:3000`만** 호출하고, gateway가 백엔�
 
 | 경로 | 파일 |
 |------|------|
-| 레슨 셸 | [`src/pages/LessonLayout.tsx`](src/pages/LessonLayout.tsx) |
-| 타이타닉 업로드 | [`src/pages/Titanic.tsx`](src/pages/Titanic.tsx) |
-| 스미스 채팅 | [`src/pages/TitanicSmith.tsx`](src/pages/TitanicSmith.tsx) |
-| 라우트 | [`src/App.tsx`](src/App.tsx) |
+| 레슨 셸 (레이아웃) | [`src/app/(site)/lesson/layout.tsx`](src/app/(site)/lesson/layout.tsx) |
+| 타이타닉 업로드 | [`src/components/Titanic.tsx`](src/components/Titanic.tsx) |
+| 스미스 채팅 | [`src/components/TitanicSmith.tsx`](src/components/TitanicSmith.tsx) |
+| 루트 레이아웃 / 라우트 | [`src/app/layout.tsx`](src/app/layout.tsx), `src/app/**/page.tsx` (App Router 파일 기반 라우팅) |
 
 ---
 
@@ -68,4 +68,8 @@ cd ..
 docker compose up --build -d
 ```
 
-프론트 이미지는 `npm run build` 후 `vite preview` (포트 3000, 컨테이너 내부).
+프론트 이미지는 `npm run build` 후 `npm run start` (`next start`, 포트 3000, 컨테이너 내부).
+
+## 다크모드
+
+지침 ---> [`_docs/darkmode-spec.md`](_docs/darkmode-spec.md) 
