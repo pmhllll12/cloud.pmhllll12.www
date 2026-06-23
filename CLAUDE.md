@@ -2,7 +2,7 @@
 
 Next.js (App Router) + Tailwind v4 UI. 개발·프리뷰 포트는 **3000 고정** ([`package.json`](package.json) 스크립트, [`next.config.ts`](next.config.ts)).
 
-공통 4원칙 전문 ---> [`../vault/CLAUDE.md`](../vault/CLAUDE.md)  
+공통 4원칙 전문 ---> [`../_docs/CLAUDE.md`](../_docs/CLAUDE.md)  
 모노레포 지도 ---> [`../CLAUDE.md`](../CLAUDE.md)
 
 ---
@@ -18,7 +18,7 @@ npm run dev
 - 브라우저: `http://localhost:3000` (또는 터미널에 표시된 Network URL)
 - `ERR_CONNECTION_REFUSED`: dev 서버가 꺼진 상태 — 터미널을 켠 채 유지한다.
 
-상세 ---> [`../DEV_SERVER.md`](../DEV_SERVER.md)
+상세 ---> [`../_docs/DEV_SERVER.md`](../_docs/DEV_SERVER.md)
 
 ---
 
@@ -51,7 +51,7 @@ Docker: 브라우저는 **`localhost:3000`만** 호출하고, gateway가 백엔�
 
 ## React 규칙 (정본)
 
-폼·상태·보안 UX ---> [`../vault/DevOps/Frontend/REACT_RULES.md`](../vault/DevOps/Frontend/REACT_RULES.md)
+폼·상태·보안 UX ---> [`_docs/react_rules.md`](_docs/react_rules.md)
 
 요약:
 

@@ -1,12 +1,12 @@
 # 에이전트 하네스 — 프론트엔드 (`www`)
 
-**필독:** [`../vault/AGENTS.md`](../vault/AGENTS.md) · [`CLAUDE.md`](CLAUDE.md) · 루트 [`../CLAUDE.md`](../CLAUDE.md)
+**필독:** [`../_docs/AGENTS.md`](../_docs/AGENTS.md) · [`CLAUDE.md`](CLAUDE.md) · 루트 [`../CLAUDE.md`](../CLAUDE.md)
 
-## 0. `vault/` 경유
+## 0. `_docs/` 경유
 
-React·폼·상태 규칙 정본 ---> [`../vault/DevOps/Frontend/REACT_RULES.md`](../vault/DevOps/Frontend/REACT_RULES.md)
+React·폼·상태 규칙 정본 ---> [`_docs/react_rules.md`](_docs/react_rules.md)
 
-Cursor에서 `@vault/DevOps/Frontend/REACT_RULES.md` 첨부 후 작업한다.
+Cursor에서 `@www/_docs/react_rules.md` 첨부 후 작업한다.
 
 ## 1. 스코프
 
@@ -21,6 +21,6 @@ Cursor에서 `@vault/DevOps/Frontend/REACT_RULES.md` 첨부 후 작업한다.
 
 ## 3–4. 공통 원칙
 
-전문 ---> [`../vault/CLAUDE.md`](../vault/CLAUDE.md) · [`../vault/AGENTS.md`](../vault/AGENTS.md)
+전문 ---> [`../_docs/CLAUDE.md`](../_docs/CLAUDE.md) · [`../_docs/AGENTS.md`](../_docs/AGENTS.md)
 
 **트레이드오프:** 속도보다 신중함.
