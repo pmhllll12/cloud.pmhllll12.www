@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { getHighlightMatch } from "@/data/worldCup2026Schedule";
+import { getHighlightMatch, type WcMatch } from "@/data/worldCup2026Schedule";
 import { koTeam } from "@/data/worldCup2026Ko";
 
 const LS_POINTS = "wc_gamify_points";
@@ -107,7 +107,11 @@ const PICK_ON = "border-accent text-accent bg-[rgba(34,211,238,0.12)]";
 export default function HeroPredictionPanel({
   onAiPreset,
 }: HeroPredictionPanelProps) {
-  const match = useMemo(() => getHighlightMatch(), []);
+  /* getHighlightMatch()의 기본값(new Date())은 서버 렌더 시각과 클라이언트 하이드레이션
+     시각이 갈라지면(특히 이 페이지처럼 정적으로 캐시된 경우) 서로 다른 경기를 골라 텍스트가
+     달라져 하이드레이션 에러(#418)를 낸다. 첫 렌더는 시각과 무관한 고정값으로 그리고,
+     마운트 후에 실제 "다음 경기"로 갱신한다 — 아래 localStorage 패턴과 동일한 이유. */
+  const [match, setMatch] = useState<WcMatch>(() => getHighlightMatch(new Date(0)));
   const mid = match.id;
   const homeKo = koTeam(match.home);
   const awayKo = koTeam(match.away);
@@ -118,6 +122,10 @@ export default function HeroPredictionPanel({
   const [picks, setPicks] = useState<PickRow[]>([]);
   const [lastPick, setLastPick] = useState<Pick | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    setMatch(getHighlightMatch());
+  }, []);
 
   /* localStorage 는 클라이언트에만 있어 SSR과 다를 수 있으므로 마운트 후에 읽는다 */
   useEffect(() => {

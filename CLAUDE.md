@@ -72,4 +72,12 @@ docker compose up --build -d
 
 ## 다크모드
 
-지침 ---> [`_docs/darkmode-spec.md`](_docs/darkmode-spec.md) 
+지침 ---> [`_docs/darkmode-spec.md`](_docs/darkmode-spec.md)
+
+---
+
+## Lint / Format
+
+ESLint(`eslint.config.mjs`) + Prettier(`.prettierrc.json`)가 `npm run lint` /
+`npm run format`, 커밋 전 `.pre-commit-config.yaml`, PR마다 `.github/workflows/lint.yml`로
+강제된다. 상세·함정 ---> [`_docs/linting.md`](_docs/linting.md) 
