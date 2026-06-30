@@ -4,26 +4,59 @@ import { useCallback, useRef, useState, type ChangeEvent } from "react";
 
 type Contact = { nickname: string; email: string; name?: string };
 
+function parseCsvLine(line: string): string[] {
+  const result: string[] = [];
+  let current = "";
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i]!;
+    if (ch === '"') {
+      if (inQuotes && line[i + 1] === '"') { current += '"'; i++; }
+      else inQuotes = !inQuotes;
+    } else if (ch === "," && !inQuotes) {
+      result.push(current.trim());
+      current = "";
+    } else {
+      current += ch;
+    }
+  }
+  result.push(current.trim());
+  return result;
+}
+
 function parseCsv(text: string): Contact[] {
   const lines = text.trim().split(/\r?\n/);
   if (lines.length < 2) return [];
-  const headers = lines[0]!.split(",").map((h) => h.trim().toLowerCase());
-  const nicknameIdx = headers.findIndex((h) => h === "nickname" || h === "닉네임");
-  const emailIdx = headers.findIndex((h) => h === "email" || h === "이메일");
-  const nameIdx = headers.findIndex((h) => h === "name" || h === "이름");
-  if (nicknameIdx === -1 || emailIdx === -1) return [];
+  const headers = parseCsvLine(lines[0]!).map((h) => h.toLowerCase());
 
-  return lines
-    .slice(1)
-    .map((line) => {
-      const cols = line.split(",").map((c) => c.trim().replace(/^"|"$/g, ""));
-      return {
-        nickname: cols[nicknameIdx] ?? "",
-        email: cols[emailIdx] ?? "",
-        name: nameIdx !== -1 ? (cols[nameIdx] ?? "") : undefined,
-      };
-    })
-    .filter((c) => c.nickname && c.email);
+  // 단순 CSV: nickname/이메일 | Google 연락처: e-mail 1 - value
+  const emailIdx = headers.findIndex(
+    (h) => h === "email" || h === "이메일" || h === "e-mail 1 - value"
+  );
+  if (emailIdx === -1) return [];
+
+  const nicknameIdx = headers.findIndex((h) => h === "nickname" || h === "닉네임");
+  const firstNameIdx = headers.findIndex((h) => h === "first name");
+  const lastNameIdx = headers.findIndex((h) => h === "last name");
+  const nameIdx = headers.findIndex((h) => h === "name" || h === "이름");
+
+  return lines.slice(1).flatMap((line) => {
+    const cols = parseCsvLine(line);
+    const email = cols[emailIdx] ?? "";
+    if (!email) return [];
+
+    // Nickname → First+Last → 이메일 앞부분 순으로 폴백
+    let nickname = nicknameIdx !== -1 ? (cols[nicknameIdx] ?? "") : "";
+    if (!nickname) {
+      const first = firstNameIdx !== -1 ? (cols[firstNameIdx] ?? "") : "";
+      const last = lastNameIdx !== -1 ? (cols[lastNameIdx] ?? "") : "";
+      nickname = [first, last].filter(Boolean).join(" ");
+    }
+    if (!nickname) nickname = email.split("@")[0] ?? "";
+
+    const name = nameIdx !== -1 ? (cols[nameIdx] ?? "") : undefined;
+    return [{ nickname, email, name }];
+  });
 }
 
 export default function AddressBookPanel() {
@@ -43,6 +76,15 @@ export default function AddressBookPanel() {
     }
     setBusy(true);
     setPickedName(file.name);
+
+    // 1) 백엔드 DB에 저장 (자동완성용)
+    const formData = new FormData();
+    formData.append("file", file);
+    fetch("/api/community/juso/upload", { method: "POST", body: formData }).catch(() => {
+      // 저장 실패는 조용히 무시 — 로컬 미리보기는 계속 동작
+    });
+
+    // 2) 로컬 미리보기
     const reader = new FileReader();
     reader.onload = (e) => {
       const text = e.target?.result as string;

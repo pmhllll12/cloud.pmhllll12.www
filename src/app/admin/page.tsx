@@ -3,6 +3,7 @@
 import { useState } from "react";
 import EmailPanel from "./EmailPanel";
 import AddressBookPanel from "./AddressBookPanel";
+import TelegramPanel from "./TelegramPanel";
 
 type NavItem = { key: string; label: string; icon: string; parent?: string };
 
@@ -14,6 +15,7 @@ const NAV_ITEMS: NavItem[] = [
   { key: "email", label: "EMAIL", icon: "✉️" },
   { key: "mail", label: "메일관리", icon: "📬" },
   { key: "addressbook", label: "주소록", icon: "📒", parent: "mail" },
+  { key: "telegram", label: "텔레그램", icon: "✈️", parent: "mail" },
   { key: "setting", label: "SETTING", icon: "⚙️" },
   { key: "lorem", label: "LOREM", icon: "📷" },
   { key: "contrary", label: "CONTRARY", icon: "📁" },
@@ -235,7 +237,12 @@ export default function Admin() {
             <AddressBookPanel />
           </main>
         ) : null}
-        <main className={`flex-1 grid grid-cols-1 gap-[14px] p-[14px] 900:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] 900:gap-5 900:p-[22px_28px_32px] ${activeNav === "mail" || activeNav === "addressbook" ? "hidden" : ""}`}>
+        {activeNav === "telegram" ? (
+          <main className="flex-1 p-[14px] 900:p-[22px_28px_32px]">
+            <TelegramPanel />
+          </main>
+        ) : null}
+        <main className={`flex-1 grid grid-cols-1 gap-[14px] p-[14px] 900:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] 900:gap-5 900:p-[22px_28px_32px] ${["mail", "addressbook", "telegram"].includes(activeNav) ? "hidden" : ""}`}>
           <section className={CARD}>
             <header className={CARD_HEAD}>
               <div>
