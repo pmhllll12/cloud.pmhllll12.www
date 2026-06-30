@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import EmailPanel from "./EmailPanel";
+import AddressBookPanel from "./AddressBookPanel";
 
-type NavItem = { key: string; label: string; icon: string };
+type NavItem = { key: string; label: string; icon: string; parent?: string };
 
 const NAV_ITEMS: NavItem[] = [
   { key: "dashboard", label: "DASHBOARD", icon: "🏠" },
@@ -10,6 +12,8 @@ const NAV_ITEMS: NavItem[] = [
   { key: "apps", label: "APPS", icon: "⭐" },
   { key: "form", label: "FORM", icon: "📝" },
   { key: "email", label: "EMAIL", icon: "✉️" },
+  { key: "mail", label: "메일관리", icon: "📬" },
+  { key: "addressbook", label: "주소록", icon: "📒", parent: "mail" },
   { key: "setting", label: "SETTING", icon: "⚙️" },
   { key: "lorem", label: "LOREM", icon: "📷" },
   { key: "contrary", label: "CONTRARY", icon: "📁" },
@@ -150,7 +154,9 @@ export default function Admin() {
             <button
               key={item.key}
               type="button"
-              className={`flex items-center gap-3 w-full border-0 bg-none p-[11px_10px] rounded-[10px] text-xs tracking-[0.04em] text-left cursor-pointer ${
+              className={`flex items-center gap-3 w-full border-0 bg-none rounded-[10px] text-xs tracking-[0.04em] text-left cursor-pointer ${
+                item.parent ? "p-[9px_10px_9px_28px]" : "p-[11px_10px]"
+              } ${
                 activeNav === item.key
                   ? "bg-accent-soft text-accent"
                   : "text-fg-2"
@@ -219,7 +225,17 @@ export default function Admin() {
           ))}
         </nav>
 
-        <main className="flex-1 grid grid-cols-1 gap-[14px] p-[14px] 900:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] 900:gap-5 900:p-[22px_28px_32px]">
+        {activeNav === "mail" ? (
+          <main className="flex-1 p-[14px] 900:p-[22px_28px_32px]">
+            <EmailPanel />
+          </main>
+        ) : null}
+        {activeNav === "addressbook" ? (
+          <main className="flex-1 p-[14px] 900:p-[22px_28px_32px]">
+            <AddressBookPanel />
+          </main>
+        ) : null}
+        <main className={`flex-1 grid grid-cols-1 gap-[14px] p-[14px] 900:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] 900:gap-5 900:p-[22px_28px_32px] ${activeNav === "mail" || activeNav === "addressbook" ? "hidden" : ""}`}>
           <section className={CARD}>
             <header className={CARD_HEAD}>
               <div>
