@@ -31,6 +31,7 @@ export default function LessonLayout({
 }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isMobileNav, setIsMobileNav] = useState(false);
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
   const toggleMenu = useCallback(() => setMenuOpen((o) => !o), []);
@@ -49,6 +50,14 @@ export default function LessonLayout({
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
   }, [menuOpen]);
+
+  useEffect(() => {
+    const mq = window.matchMedia(MOBILE_NAV_QUERY);
+    const sync = () => setIsMobileNav(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -153,7 +162,7 @@ export default function LessonLayout({
               닫기
             </button>
           </div>
-          <details className="lesson-sidebar__details m-0 border-0" open>
+          <details className="lesson-sidebar__details m-0 border-0" open={!isMobileNav}>
             <summary className="lesson-sidebar__summary cursor-pointer text-base font-extrabold text-[#0f172a] py-[10px_0_8px] flex items-center justify-between select-none">
               타이타닉
             </summary>
