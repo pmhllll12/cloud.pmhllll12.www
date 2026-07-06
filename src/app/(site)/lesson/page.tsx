@@ -1,3 +1,5 @@
+export const revalidate = 60;
+
 export default function LessonOverview() {
   return (
     <article className="max-w-[960px] mx-auto text-[#1e293b]">

@@ -1,5 +1,7 @@
 import TitanicSmith from "@/components/TitanicSmith";
 
+export const revalidate = 60;
+
 export default function LessonTitanicSmith() {
   return (
     <article className="max-w-[720px]">

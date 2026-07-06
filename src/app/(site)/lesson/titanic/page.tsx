@@ -1,5 +1,7 @@
 import Titanic from "@/components/Titanic";
 
+export const revalidate = 60;
+
 export default function LessonTitanic() {
   return (
     <article className="max-w-[720px]">

@@ -1,5 +1,7 @@
 import TitanicPassengers from "@/components/TitanicPassengers";
 
+export const revalidate = 60;
+
 export default function LessonTitanicPassengers() {
   return (
     <article className="max-w-[min(1200px,100%)]">

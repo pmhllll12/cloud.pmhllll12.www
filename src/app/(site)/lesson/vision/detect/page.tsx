@@ -1,5 +1,7 @@
 import VisionDetect from "@/components/VisionDetect";
 
+export const revalidate = 60;
+
 export default function LessonVisionDetect() {
   return (
     <article className="max-w-[720px]">
