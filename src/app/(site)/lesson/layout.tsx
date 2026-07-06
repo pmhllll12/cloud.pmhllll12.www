@@ -200,6 +200,13 @@ export default function LessonLayout({
               >
                 과정 개요
               </Link>
+              <Link
+                href="/lesson/vision/detect"
+                className={sublinkClass(pathname === "/lesson/vision/detect")}
+                onClick={closeMenu}
+              >
+                객체 탐지
+              </Link>
             </div>
           </details>
         </aside>
